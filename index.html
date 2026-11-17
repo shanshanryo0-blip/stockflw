@@ -43,6 +43,7 @@
       line-height: 1.6;
     }
 
+    /* ログイン画面 */
     .lock-screen {
       position: fixed;
       inset: 0;
@@ -75,6 +76,30 @@
       box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
     }
 
+    /* ★初回プラン選択モーダル */
+    .plan-welcome-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 180;
+      overflow-y: auto;
+      padding: 24px 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .plan-welcome-wrap {
+      background: var(--bg);
+      border-radius: 24px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 880px;
+      margin: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ヘッダー */
     .app-header {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(12px);
@@ -82,7 +107,7 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      padding: 11px 16px;
+      padding: 10px 14px;
     }
     .header-inner {
       max-width: 920px;
@@ -90,48 +115,95 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.02rem;
       letter-spacing: -0.02em;
     }
     .brand-icon {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
       color: #fff;
-      border-radius: 10px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
+    .plan-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--warn-soft);
+      color: #b45309;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .plan-pill-btn.pro {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
     .user-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      border: 1px solid var(--primary-border);
-      font-size: 0.76rem;
+      gap: 4px;
+      background: var(--bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 5px 10px;
+      padding: 5px 8px;
       border-radius: 999px;
+      white-space: nowrap;
     }
     .header-lock-btn {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-sub);
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 10px;
+      padding: 5px 8px;
+      border-radius: 9px;
       cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* フリープラン制限バナー */
+    .free-limit-bar {
+      background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
+      border: 1px solid #fcd34d;
+      border-radius: 14px;
+      padding: 11px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #92400e;
+    }
+    .upgrade-mini-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     .container { max-width: 920px; margin: 0 auto; padding: 16px; }
@@ -489,12 +561,13 @@
     .chat-cat { background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px; }
     .admin-reply-box { margin-top: 10px; padding: 10px 12px; background: var(--in-soft); border-left: 4px solid var(--in-color); border-radius: 6px; font-size: 0.86rem; color: #065f46; }
 
-    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
+    /* 料金プランカード */
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 16px; }
     @media (min-width: 720px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
     .plan-card {
       background: var(--surface);
       border: 2px solid var(--border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 18px;
       display: flex;
       flex-direction: column;
@@ -505,6 +578,15 @@
       background: linear-gradient(180deg, #eff6ff 0%, #ffffff 45%);
       box-shadow: var(--shadow-md);
     }
+    .plan-features {
+      font-size: 0.82rem;
+      color: var(--text-main);
+      padding-left: 18px;
+      margin: 0 0 16px 0;
+      line-height: 1.6;
+    }
+    .plan-features li.disabled-feat { color: var(--text-sub); text-decoration: line-through; }
+
     .quote-sheet { background: #fff; border: 1px solid #94a3b8; border-radius: 12px; padding: 20px; margin-top: 16px; }
     .quote-header { text-align: center; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.2em; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px; }
     .quote-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 12px 0; }
@@ -587,7 +669,7 @@
 
     @media print {
       body { background: #fff; padding: 0; }
-      .app-header, .bottom-nav, .no-print, .lock-screen { display: none !important; }
+      .app-header, .bottom-nav, .no-print, .lock-screen, .plan-welcome-screen { display: none !important; }
       .container { max-width: 100%; padding: 0; }
       .quote-sheet { border: none; padding: 0; margin: 0; }
     }
@@ -595,7 +677,7 @@
 </head>
 <body>
 
-  <!-- 社員パスコードログイン画面 -->
+  <!-- 1. 社員パスコードログイン画面 -->
   <div id="lock-screen" class="lock-screen">
     <div class="lock-card">
       <div class="lock-icon">
@@ -613,17 +695,82 @@
     </div>
   </div>
 
+  <!-- 2. ★ログイン直後のプラン選択画面（最初はフリープランから開始） -->
+  <div id="plan-welcome-screen" class="plan-welcome-screen hidden">
+    <div class="plan-welcome-wrap">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <span style="display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:8px;">StockFlow ご利用プラン選択</span>
+        <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">まずは「フリープラン」でお試しいただけます</h2>
+        <p style="margin: 0; font-size: 0.86rem; color: var(--text-sub);">ご希望のプランを選択してスタートしてください（後からいつでも変更・見積書作成が可能です）</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- フリープラン（初期推奨） -->
+        <div class="plan-card selected-plan" id="welcome-card-trial">
+          <div>
+            <div style="display:inline-block; background:var(--in-color); color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">まずはここから開始</div>
+            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フリープラン</h3>
+            <div style="font-size:1.3rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
+            <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">制限はありますが、スマホでのQR読み取りと在庫一覧を無料でお試しいただけます。</p>
+            <ul class="plan-features">
+              <li><strong>QR読み取り＆在庫一覧の閲覧</strong></li>
+              <li>商品登録 <strong>10件まで</strong></li>
+              <li class="disabled-feat">連続スキャン（1個即処理）</li>
+              <li class="disabled-feat">社員追加・Excel一括・チャット保守</li>
+            </ul>
+          </div>
+          <button class="btn btn-in" onclick="chooseInitialPlan('trial')">フリープランで始める（無料）</button>
+        </div>
+
+        <!-- 現場導入セットアップ -->
+        <div class="plan-card" id="welcome-card-standard">
+          <div>
+            <div style="display:inline-block; background:var(--primary); color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">一番人気・買い切り</div>
+            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">現場導入セットアップ</h3>
+            <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
+            <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">毎月の固定費なしで、StockFlowの<strong>全機能</strong>が使える標準導入プランです。</p>
+            <ul class="plan-features">
+              <li><strong>全機能フル開放（商品数無制限）</strong></li>
+              <li><strong>連続スキャン＆要発注リストコピー</strong></li>
+              <li><strong>社員アカウント管理＆Excel一括登録</strong></li>
+              <li>専用環境構築＆初期設定サポート</li>
+            </ul>
+          </div>
+          <button class="btn btn-primary" onclick="chooseInitialPlan('standard')">全機能プランで始める</button>
+        </div>
+
+        <!-- フルカスタム＆安心保守 -->
+        <div class="plan-card" id="welcome-card-custom">
+          <div>
+            <div style="display:inline-block; background:#0f172a; color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">独自開発＋専任保守</div>
+            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フルカスタム＆安心保守</h3>
+            <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 <span style="font-size:0.85rem;">/ 月 5,000円</span></div>
+            <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">全機能の利用に加え、自社専用のカスタマイズとチャット保守が付きます。</p>
+            <ul class="plan-features">
+              <li><strong>全機能フル利用</strong>＋専用環境構築</li>
+              <li><strong>独自項目の追加・画面カスタム対応</strong></li>
+              <li><strong>アプリ内チャット保守窓口</strong></li>
+              <li>不具合対応・操作サポート無制限</li>
+            </ul>
+          </div>
+          <button class="btn btn-outline" onclick="chooseInitialPlan('custom')">フルカスタムプランで始める</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ヘッダー -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
         <div class="brand-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
         </div>
         <span id="header-org-name">StockFlow</span>
       </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="user-chip" id="header-user-badge">👤 未ログイン</span>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button class="plan-pill-btn" id="header-plan-badge" onclick="openPlanSelector()">フリープラン ▾</button>
+        <span class="user-chip" id="header-user-badge">👤 管理者</span>
         <button class="header-lock-btn" onclick="lockApp()">切替</button>
       </div>
     </div>
@@ -641,6 +788,14 @@
 
     <!-- 【タブ1】スキャン・連続スキャン -->
     <section id="scan-section" class="narrow-container">
+      <!-- フリープラン制限通知バー -->
+      <div id="free-plan-banner" class="free-limit-bar">
+        <div>
+          <strong>現在フリープラン利用中</strong>（商品10件まで・一部機能制限）
+        </div>
+        <button class="upgrade-mini-btn" onclick="openPlanSelector()">全機能を開放</button>
+      </div>
+
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">登録商品数</div>
@@ -666,7 +821,7 @@
 
         <div class="mode-switch">
           <button type="button" id="scan-mode-single" class="mode-btn active" onclick="setScanMode('single')">通常スキャン（詳細確認）</button>
-          <button type="button" id="scan-mode-cont" class="mode-btn" onclick="setScanMode('cont')">⚡ 連続スキャン（1個即処理）</button>
+          <button type="button" id="scan-mode-cont" class="mode-btn" onclick="setScanMode('cont')">⚡ 連続スキャン <span id="cont-lock-icon">🔒</span></button>
         </div>
 
         <div id="cont-options" class="hidden" style="margin-bottom: 12px; background: var(--primary-soft); padding: 12px; border-radius: 12px; border: 1px solid var(--primary-border);">
@@ -778,7 +933,7 @@
 
         <div id="order-copy-bar" class="hidden" style="margin-bottom: 12px;">
           <button type="button" class="btn btn-primary" style="padding: 11px; font-size: 0.88rem;" onclick="copyLowStockOrderList()">
-            📋 要発注リストをテキストコピー（LINE・メール用）
+            📋 要発注リストをテキストコピー <span id="copy-lock-icon">🔒</span>
           </button>
         </div>
 
@@ -812,7 +967,10 @@
     <!-- 【タブ4】新規商品登録 -->
     <section id="register-section" class="narrow-container hidden">
       <div class="card">
-        <h2 class="card-title"><span>➕ 新しい商品を登録</span></h2>
+        <h2 class="card-title">
+          <span>➕ 新しい商品を登録</span>
+          <span id="register-limit-badge" style="font-size: 0.76rem; color: #b45309; background: var(--warn-soft); padding: 3px 8px; border-radius: 6px;">フリープラン: 10件まで</span>
+        </h2>
         <div class="form-field">
           <label class="form-label">商品ID（必須・半角英数字）</label>
           <div class="input-group">
@@ -850,9 +1008,10 @@
         <button id="sub-excel" class="sub-tab active" onclick="switchSubTab('excel')">📊 Excel一括</button>
         <button id="sub-settings" class="sub-tab" onclick="switchSubTab('settings')">⚙️ 社員・設定</button>
         <button id="sub-chat" class="sub-tab" onclick="switchSubTab('chat')">💬 保守窓口</button>
-        <button id="sub-quote" class="sub-tab" onclick="switchSubTab('quote')">📄 料金・見積</button>
+        <button id="sub-quote" class="sub-tab" onclick="switchSubTab('quote')">📄 プラン・見積</button>
       </div>
 
+      <!-- サブ1：エクセル一括登録 -->
       <div id="panel-excel" class="narrow-container">
         <div class="card">
           <h2 class="card-title"><span>📊 エクセル・CSVから一括登録</span></h2>
@@ -878,6 +1037,7 @@
         </div>
       </div>
 
+      <!-- サブ2：社員アカウント管理 ＆ システム設定 -->
       <div id="panel-settings" class="narrow-container hidden">
         <div class="card">
           <h2 class="card-title"><span>⚙️ システム基本設定</span></h2>
@@ -922,6 +1082,7 @@
         </div>
       </div>
 
+      <!-- サブ3：チャット保守 -->
       <div id="panel-chat" class="narrow-container hidden">
         <div class="card">
           <h2 class="card-title"><span>💬 項目追加・不具合チャット保守窓口</span></h2>
@@ -948,32 +1109,52 @@
         </div>
       </div>
 
+      <!-- サブ4：料金プラン＆簡易見積書 -->
       <div id="panel-quote" class="hidden">
         <div class="no-print">
           <div class="grid-3">
+            <!-- フリープラン -->
             <div class="plan-card" id="card-plan-trial">
               <div>
-                <h3 style="margin:0 0 8px 0;">お試しスタート</h3>
+                <h3 style="margin:0 0 6px 0;">フリープラン</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 / 月額 0円</div>
-                <p style="font-size:0.85rem; color:var(--text-sub);">今のデモ環境でQR読み取り・入出庫・在庫一覧をそのままお試しいただけます。</p>
+                <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">制限はありますが、スマホでのQR読み取りと在庫一覧を無料でお試しいただけます。</p>
+                <ul class="plan-features">
+                  <li><strong>QR読み取り＆在庫一覧の閲覧</strong></li>
+                  <li>商品登録 <strong>10件まで</strong></li>
+                  <li class="disabled-feat">連続スキャン・発注コピー・社員追加</li>
+                </ul>
               </div>
               <button id="btn-plan-trial" class="btn btn-outline" onclick="selectPlanForQuote('trial')">このプランを選択</button>
             </div>
 
+            <!-- 現場導入セットアップ -->
             <div class="plan-card selected-plan" id="card-plan-standard">
               <div>
-                <h3 style="margin:0 0 8px 0;">現場導入セットアップ</h3>
+                <div style="display:inline-block; background:var(--primary); color:#fff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
+                <h3 style="margin:0 0 6px 0;">現場導入セットアップ</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 / 月額 0円</div>
-                <p style="font-size:0.85rem; color:var(--text-sub);">本番環境構築・エクセル商品一括登録・スマホ設定まで一式セットアップします。</p>
+                <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">毎月の固定費なしで、StockFlowの<strong>全機能</strong>が使える標準プランです。</p>
+                <ul class="plan-features">
+                  <li><strong>全機能フル開放（商品数無制限）</strong></li>
+                  <li><strong>連続スキャン・発注コピー・社員管理</strong></li>
+                  <li>専用環境構築＆初期設定一式</li>
+                </ul>
               </div>
-              <button id="btn-plan-standard" class="btn btn-primary" onclick="selectPlanForQuote('standard')">✓ 選択中（見積書に反映済）</button>
+              <button id="btn-plan-standard" class="btn btn-primary" onclick="selectPlanForQuote('standard')">✓ 選択中（プラン適用＆見積反映）</button>
             </div>
 
+            <!-- フルカスタム＆安心保守 -->
             <div class="plan-card" id="card-plan-custom">
               <div>
-                <h3 style="margin:0 0 8px 0;">カスタム＆チャット保守</h3>
+                <h3 style="margin:0 0 6px 0;">フルカスタム＆安心保守</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 / 月 5,000円</div>
-                <p style="font-size:0.85rem; color:var(--text-sub);">発注点アラート・社員管理・項目追加や不具合時のチャット保守付き。</p>
+                <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">全機能の利用に加え、自社専用のカスタマイズとチャット保守が付きます。</p>
+                <ul class="plan-features">
+                  <li><strong>全機能フル利用</strong>＋専用環境構築</li>
+                  <li><strong>独自項目の追加・画面カスタム対応</strong></li>
+                  <li><strong>アプリ内チャット保守窓口</strong></li>
+                </ul>
               </div>
               <button id="btn-plan-custom" class="btn btn-outline" onclick="selectPlanForQuote('custom')">このプランを選択</button>
             </div>
@@ -986,11 +1167,11 @@
               <input type="text" id="q-client" placeholder="例: 株式会社〇〇" oninput="updateQuote()">
             </div>
             <div class="form-field">
-              <label class="form-label">プラン選択</label>
-              <select id="q-plan" onchange="updateQuote()">
-                <option value="trial">お試しスタート（初期 0円 / 月額 0円）</option>
+              <label class="form-label">プラン選択（選ぶとアプリの動作プランも切り替わります）</label>
+              <select id="q-plan" onchange="selectPlanForQuote(this.value)">
+                <option value="trial">フリープラン（初期 0円 / 月額 0円）</option>
                 <option value="standard" selected>現場導入セットアップ（初期 30,000円 / 月額 0円）</option>
-                <option value="custom">カスタム＆チャット保守（初期 50,000円 / 月額 5,000円）</option>
+                <option value="custom">フルカスタム＆安心保守（初期 50,000円 / 月額 5,000円）</option>
               </select>
             </div>
             <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.9rem;">
@@ -1093,7 +1274,6 @@
   </nav>
 
   <script>
-    // ご提示いただいたGASウェブアプリURL（設定済み）
     const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbywpuLepi3E0W4XQhB71SP2wJaHjFXWTBKkOcTAO4mR13Yt53nxDVtJ77Tr61HrxkRu/exec';
 
     async function callGasApi(action, args = []) {
@@ -1112,7 +1292,8 @@
     let html5QrCode = null;
     let listQrCode = null;
     let currentUser = null;
-    let appSettings = { orgName: 'StockFlow', notifyEmail: '', scanDelay: 2 };
+    // ★初期はフリープラン（trial）から開始
+    let appSettings = { orgName: 'StockFlow', notifyEmail: '', scanDelay: 2, plan: 'trial' };
     let currentItem = null;
     let detailMode = 'inout';
     let scanMode = 'single';
@@ -1126,13 +1307,19 @@
     let parsedExcelRows = [];
     let lastTransaction = null;
 
+    const PLAN_LABELS = {
+      trial: 'フリープラン',
+      standard: '現場導入プラン',
+      custom: 'フルカスタム保守'
+    };
+
     window.onload = function() {
       const savedUser = sessionStorage.getItem('sf_user');
       const savedSettings = sessionStorage.getItem('sf_settings');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
         if (savedSettings) appSettings = JSON.parse(savedSettings);
-        applyLoginState();
+        applyLoginState(false);
       }
 
       const today = new Date();
@@ -1140,12 +1327,62 @@
       updateQuote();
     };
 
-    function applyLoginState() {
+    function applyLoginState(showPlanScreen) {
       document.getElementById('lock-screen').classList.add('hidden');
       document.getElementById('header-org-name').textContent = appSettings.orgName || 'StockFlow';
-      document.getElementById('header-user-badge').textContent = `👤 ${currentUser.name}（${currentUser.role}）`;
+      document.getElementById('header-user-badge').textContent = `👤 ${currentUser.name}`;
       document.getElementById('input-staff').value = currentUser.name;
+
+      // 初回ログイン時はプラン選択画面を表示（最初はフリープランが選択状態）
+      if (showPlanScreen) {
+        document.getElementById('plan-welcome-screen').classList.remove('hidden');
+      }
+      syncPlanUI();
       refreshDashboardKPI();
+    }
+
+    // プラン状態に合わせてUIのロック表示・バッジを同期
+    function syncPlanUI() {
+      const plan = appSettings.plan || 'trial';
+      const isFree = (plan === 'trial');
+
+      const pill = document.getElementById('header-plan-badge');
+      pill.textContent = `${PLAN_LABELS[plan] || 'フリープラン'} ▾`;
+      pill.classList.toggle('pro', !isFree);
+
+      document.getElementById('free-plan-banner').classList.toggle('hidden', !isFree);
+      document.getElementById('register-limit-badge').classList.toggle('hidden', !isFree);
+      document.getElementById('cont-lock-icon').classList.toggle('hidden', !isFree);
+      document.getElementById('copy-lock-icon').classList.toggle('hidden', !isFree);
+
+      if (isFree && scanMode === 'cont') {
+        setScanMode('single');
+      }
+
+      document.getElementById('q-plan').value = plan;
+      updateQuote();
+    }
+
+    function openPlanSelector() {
+      stopScanner();
+      document.getElementById('plan-welcome-screen').classList.remove('hidden');
+    }
+
+    async function chooseInitialPlan(planKey) {
+      document.getElementById('plan-welcome-screen').classList.add('hidden');
+      appSettings.plan = planKey;
+      sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
+      syncPlanUI();
+      showToast(`「${PLAN_LABELS[planKey]}」で開始しました`);
+
+      try {
+        const updated = await callGasApi('updateActivePlan', [planKey]);
+        appSettings = updated;
+        sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
+        syncPlanUI();
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     async function unlockApp() {
@@ -1160,9 +1397,11 @@
         if (res.success) {
           currentUser = res.staff;
           appSettings = res.settings;
+          // 最初はフリープランを初期選択にする
+          appSettings.plan = 'trial';
           sessionStorage.setItem('sf_user', JSON.stringify(currentUser));
           sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
-          applyLoginState();
+          applyLoginState(true);
         } else {
           alert('パスコードに一致する社員アカウントが見つかりません。');
           document.getElementById('login-pass').value = '';
@@ -1180,6 +1419,7 @@
       sessionStorage.removeItem('sf_user');
       currentUser = null;
       document.getElementById('login-pass').value = '';
+      document.getElementById('plan-welcome-screen').classList.add('hidden');
       document.getElementById('lock-screen').classList.remove('hidden');
     }
 
@@ -1213,6 +1453,12 @@
     }
 
     function setScanMode(mode) {
+      if (mode === 'cont' && appSettings.plan === 'trial') {
+        if (confirm('⚡ 連続スキャンは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
       scanMode = mode;
       document.getElementById('scan-mode-single').classList.toggle('active', mode === 'single');
       document.getElementById('scan-mode-cont').classList.toggle('active', mode === 'cont');
@@ -1692,6 +1938,13 @@
     }
 
     function copyLowStockOrderList() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('📋 要発注リストの一括コピーは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
       const lowItems = allItemsCache.filter(i => i.stock <= i.minStock);
       if (lowItems.length === 0) {
         showToast('現在、要発注の商品はありません');
@@ -1793,6 +2046,13 @@
     }
 
     async function submitNewItem() {
+      if (appSettings.plan === 'trial' && allItemsCache.length >= 10) {
+        if (confirm('フリープランの商品登録上限（10件まで）に達しています。\n全機能プランに切り替えますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
       const id = document.getElementById('new-id').value.trim();
       const name = document.getElementById('new-name').value.trim();
       const stock = document.getElementById('new-stock').value;
@@ -1832,7 +2092,9 @@
           callGasApi('getAppSettings'),
           callGasApi('getStaffList')
         ]);
-        appSettings = s;
+        appSettings.orgName = s.orgName;
+        appSettings.notifyEmail = s.notifyEmail;
+        appSettings.scanDelay = s.scanDelay;
         document.getElementById('set-org-name').value = s.orgName;
         document.getElementById('set-notify-email').value = s.notifyEmail;
         document.getElementById('set-scan-delay').value = s.scanDelay;
@@ -1850,7 +2112,7 @@
       const btn = document.getElementById('save-settings-btn');
       btn.disabled = true;
       try {
-        const s = await callGasApi('saveAppSettings', [org, email, delay]);
+        const s = await callGasApi('saveAppSettings', [org, email, delay, appSettings.plan]);
         appSettings = s;
         sessionStorage.setItem('sf_settings', JSON.stringify(s));
         document.getElementById('header-org-name').textContent = s.orgName;
@@ -1879,6 +2141,13 @@
     }
 
     async function createStaffAccount() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('社員アカウントの追加は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
       const id = document.getElementById('add-staff-id').value.trim();
       const name = document.getElementById('add-staff-name').value.trim();
       const pass = document.getElementById('add-staff-pass').value.trim();
@@ -1955,6 +2224,13 @@
     }
 
     async function executeBulkImport() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('Excel一括登録は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
       if (parsedExcelRows.length === 0) return;
       const btn = document.getElementById('excel-import-btn');
       btn.disabled = true;
@@ -1981,6 +2257,13 @@
     }
 
     async function submitSupportChat() {
+      if (appSettings.plan !== 'custom') {
+        if (confirm('チャット保守窓口は「フルカスタム＆安心保守」プラン限定です。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
       const cat = document.getElementById('chat-category').value;
       const sender = currentUser ? `${currentUser.name} (${currentUser.id})` : '担当者';
       const msg = document.getElementById('chat-message').value.trim();
@@ -2024,10 +2307,18 @@
       });
     }
 
-    function selectPlanForQuote(planKey) {
+    async function selectPlanForQuote(planKey) {
       document.getElementById('q-plan').value = planKey;
-      updateQuote();
-      showToast('見積書に反映しました');
+      appSettings.plan = planKey;
+      sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
+      syncPlanUI();
+      showToast(`「${PLAN_LABELS[planKey]}」を適用＆見積書に反映しました`);
+
+      try {
+        await callGasApi('updateActivePlan', [planKey]);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     function syncPlanCardSelection(selectedKey) {
@@ -2038,7 +2329,7 @@
         if (key === selectedKey) {
           card.classList.add('selected-plan');
           btn.className = 'btn btn-primary';
-          btn.textContent = '✓ 選択中（見積書に反映済）';
+          btn.textContent = '✓ 選択中（適用＆見積反映済）';
         } else {
           card.classList.remove('selected-plan');
           btn.className = 'btn btn-outline';
@@ -2058,11 +2349,11 @@
       let monthlyFee = 0;
 
       if (planKey === 'trial') {
-        rows.push({ name: 'お試しスタートプラン（基本システム利用）', qty: 1, price: 0 });
+        rows.push({ name: 'フリープラン（QR読み取り・在庫一覧閲覧／商品10件まで）', qty: 1, price: 0 });
       } else if (planKey === 'standard') {
-        rows.push({ name: '現場導入セットアップ（環境構築・初期設定・操作案内）', qty: 1, price: 30000 });
+        rows.push({ name: '現場導入セットアップ（全機能フル開放・専用環境構築・初期設定一式）', qty: 1, price: 30000 });
       } else if (planKey === 'custom') {
-        rows.push({ name: 'カスタム＆チャット保守（社員管理・連続スキャン・保守）', qty: 1, price: 50000 });
+        rows.push({ name: 'フルカスタム＆安心保守（全機能フル利用・独自項目カスタム・チャット保守）', qty: 1, price: 50000 });
         monthlyFee = 5000;
       }
 
