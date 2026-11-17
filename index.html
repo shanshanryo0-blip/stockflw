@@ -43,7 +43,6 @@
       line-height: 1.6;
     }
 
-    /* ログイン画面 */
     .lock-screen {
       position: fixed;
       inset: 0;
@@ -76,7 +75,6 @@
       box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
     }
 
-    /* プラン選択モーダル */
     .plan-welcome-screen {
       position: fixed;
       inset: 0;
@@ -99,7 +97,6 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
-    /* ヘッダー */
     .app-header {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(12px);
@@ -180,7 +177,6 @@
       white-space: nowrap;
     }
 
-    /* フリープラン制限バナー */
     .free-limit-bar {
       background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
       border: 1px solid #fcd34d;
@@ -509,7 +505,6 @@
     }
     .inv-count.low { background: var(--out-soft); color: var(--out-color); border-color: #fca5a5; }
 
-    /* 管理・設定サブタブ（5分割） */
     .sub-tabs {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -532,7 +527,6 @@
     }
     .sub-tab.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-xs); }
 
-    /* ポータルカード */
     .portal-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -589,7 +583,6 @@
     .chat-cat { background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px; }
     .admin-reply-box { margin-top: 10px; padding: 10px 12px; background: var(--in-soft); border-left: 4px solid var(--in-color); border-radius: 6px; font-size: 0.86rem; color: #065f46; }
 
-    /* ★料金プランカード（選択中の強調表示強化） */
     .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 16px; }
     @media (min-width: 720px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
     .plan-card {
@@ -722,25 +715,27 @@
 </head>
 <body>
 
-  <!-- 1. 社員パスコードログイン画面 -->
+  <!-- 1. 会社コード＆社員パスコードログイン画面 -->
   <div id="lock-screen" class="lock-screen">
     <div class="lock-card">
       <div class="lock-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </div>
-      <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">StockFlow 社員ログイン</h2>
-      <p style="margin: 0 0 20px 0; font-size: 0.86rem; color: var(--text-sub);">
-        自分の社員パスコードを入力してください<br>
-        <span style="font-size: 0.76rem;">（初期管理者: <strong>1234</strong> ／ 一般社員例: <strong>0000</strong>）</span>
+      <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">StockFlow ログイン</h2>
+      <p style="margin: 0 0 20px 0; font-size: 0.84rem; color: var(--text-sub);">
+        会社コードと社員パスコードを入力してください
       </p>
       <div class="form-field">
-        <input type="password" id="login-pass" placeholder="パスコードを入力" inputmode="numeric" onkeydown="if(event.key==='Enter') unlockApp()">
+        <input type="text" id="login-corp" placeholder="会社コード（例: corp-a-8392）" autocomplete="organization">
+      </div>
+      <div class="form-field">
+        <input type="password" id="login-pass" placeholder="社員パスコード（例: 1234）" inputmode="numeric" onkeydown="if(event.key==='Enter') unlockApp()">
       </div>
       <button id="unlock-btn" class="btn btn-primary" onclick="unlockApp()">ログイン</button>
     </div>
   </div>
 
-  <!-- 2. プラン選択・切り替えモーダル（選択中プランを強調表示） -->
+  <!-- 2. プラン選択・切り替えモーダル -->
   <div id="plan-welcome-screen" class="plan-welcome-screen hidden">
     <div class="plan-welcome-wrap">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -819,7 +814,7 @@
       </div>
       <div style="display: flex; align-items: center; gap: 6px;">
         <button class="plan-pill-btn" id="header-plan-badge" onclick="openPlanSelector()">フリープラン ▾</button>
-        <span class="user-chip" id="header-user-badge">👤 管理者</span>
+        <span class="user-chip" id="header-user-badge">👤 未ログイン</span>
         <button class="header-lock-btn" onclick="lockApp()">切替</button>
       </div>
     </div>
@@ -1060,38 +1055,49 @@
         <button id="sub-quote" class="sub-tab" onclick="switchSubTab('quote')">📄 プラン・見積</button>
       </div>
 
-      <!-- ★サブ0：スプレッドシート＆管理ポータルサイト -->
+      <!-- サブ0：スプレッドシート＆管理ポータルサイト -->
       <div id="panel-portal" class="narrow-container">
         <div class="card" style="background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 60%); border-color: #a7f3d0;">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
             <div style="width:42px; height:42px; background:#16a34a; color:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">📊</div>
             <div>
               <h2 style="margin:0; font-size:1.08rem; font-weight:800;">データベースポータル（Googleスプレッドシート）</h2>
-              <div style="font-size:0.78rem; color:#065f46; font-weight:600;">クラウド上の元データを直接閲覧・編集・バックアップできます</div>
+              <div style="font-size:0.78rem; color:#065f46; font-weight:600;">自社専用の元データを直接閲覧・編集・バックアップできます</div>
             </div>
           </div>
 
-          <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="btn btn-sheet" style="margin-bottom:12px;">
+          <a id="portal-main-sheet-link" href="#" target="_blank" rel="noopener" class="btn btn-sheet" style="margin-bottom:12px;">
             🔗 Googleスプレッドシート本体を別タブで開く ↗
           </a>
 
           <div class="portal-grid">
-            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+            <a id="portal-card-1" href="#" target="_blank" rel="noopener" class="portal-link-card">
               <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">📦 商品マスタ</div>
               <div style="font-size:0.75rem; color:var(--text-sub);">商品ID・現在庫・発注点の一覧表を直接編集</div>
             </a>
-            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+            <a id="portal-card-2" href="#" target="_blank" rel="noopener" class="portal-link-card">
               <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">🕒 入出庫履歴</div>
               <div style="font-size:0.75rem; color:var(--text-sub);">全スタッフの操作ログと日時記録を確認</div>
             </a>
-            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+            <a id="portal-card-3" href="#" target="_blank" rel="noopener" class="portal-link-card">
               <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">👥 社員マスタ</div>
               <div style="font-size:0.75rem; color:var(--text-sub);">社員パスコードや権限のリストを確認</div>
             </a>
-            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+            <a id="portal-card-4" href="#" target="_blank" rel="noopener" class="portal-link-card">
               <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">💬 保守サポート履歴</div>
               <div style="font-size:0.75rem; color:var(--text-sub);">F列に返信を記入するとアプリ側へ反映</div>
             </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span>🔗 社員用ログインURL（自動入力リンク）</span></h2>
+          <p style="font-size:0.82rem; color:var(--text-sub); margin-top:0;">
+            以下のURLをスタッフに共有すると、会社コードが自動入力された状態でログインできます。
+          </p>
+          <div class="input-group">
+            <input type="text" id="portal-login-url" readonly style="font-size:0.82rem; background:#f1f5f9;">
+            <button type="button" class="btn btn-outline" style="width:auto; padding:0 16px; font-size:0.82rem;" onclick="copyTenantLoginUrl()">コピー</button>
           </div>
         </div>
 
@@ -1204,7 +1210,7 @@
         </div>
       </div>
 
-      <!-- サブ4：料金プラン＆簡易見積書（選択中プラン強調表示） -->
+      <!-- サブ4：料金プラン＆簡易見積書 -->
       <div id="panel-quote" class="hidden">
         <div class="no-print">
           <div class="grid-3">
@@ -1375,13 +1381,18 @@
     const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbywpuLepi3E0W4XQhB71SP2wJaHjFXWTBKkOcTAO4mR13Yt53nxDVtJ77Tr61HrxkRu/exec';
 
     async function callGasApi(action, args = []) {
+      const token = sessionStorage.getItem('sf_token') || '';
       const res = await fetch(GAS_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: action, args: args })
+        body: JSON.stringify({ action: action, token: token, args: args })
       });
       const json = await res.json();
       if (json.status === 'error') {
+        if (json.message && json.message.startsWith('AUTH_EXPIRED')) {
+          alert('ログインの有効期限が切れました。再度ログインしてください。');
+          lockApp();
+        }
         throw new Error(json.message);
       }
       return json.data;
@@ -1391,8 +1402,9 @@
     let listQrCode = null;
     let currentUser = null;
     let appSettings = { orgName: 'StockFlow', notifyEmail: '', scanDelay: 2, plan: 'trial' };
+    let tenantMeta = { corpCode: '', sheetUrl: '#' };
     let currentItem = null;
-    let currentTab = 'scan'; // ★タブ重なり防止用の現在地トラッカー
+    let currentTab = 'scan';
     let detailMode = 'inout';
     let scanMode = 'single';
     let contAction = '入庫';
@@ -1412,11 +1424,25 @@
     };
 
     window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      const urlCorp = params.get('corp');
+      const savedCorp = localStorage.getItem('sf_last_corp');
+      if (urlCorp) {
+        document.getElementById('login-corp').value = urlCorp;
+        localStorage.setItem('sf_last_corp', urlCorp);
+      } else if (savedCorp) {
+        document.getElementById('login-corp').value = savedCorp;
+      }
+
+      const savedToken = sessionStorage.getItem('sf_token');
       const savedUser = sessionStorage.getItem('sf_user');
       const savedSettings = sessionStorage.getItem('sf_settings');
-      if (savedUser) {
+      const savedMeta = sessionStorage.getItem('sf_meta');
+
+      if (savedToken && savedUser) {
         currentUser = JSON.parse(savedUser);
         if (savedSettings) appSettings = JSON.parse(savedSettings);
+        if (savedMeta) tenantMeta = JSON.parse(savedMeta);
         applyLoginState(false);
       }
 
@@ -1432,6 +1458,16 @@
       document.getElementById('header-user-badge').textContent = `👤 ${currentUser.name}`;
       document.getElementById('input-staff').value = currentUser.name;
 
+      const sheetUrl = tenantMeta.sheetUrl || '#';
+      document.getElementById('portal-main-sheet-link').href = sheetUrl;
+      ['portal-card-1', 'portal-card-2', 'portal-card-3', 'portal-card-4'].forEach(id => {
+        document.getElementById(id).href = sheetUrl;
+      });
+      const baseUrl = window.location.origin + window.location.pathname;
+      document.getElementById('portal-login-url').value = tenantMeta.corpCode
+        ? `${baseUrl}?corp=${encodeURIComponent(tenantMeta.corpCode)}`
+        : baseUrl;
+
       syncPlanUI();
       if (showPlanScreen) {
         openPlanSelector();
@@ -1439,7 +1475,17 @@
       refreshDashboardKPI();
     }
 
-    // ★初回モーダル＆設定画面の「選択中プラン強調表示」を一括同期
+    function copyTenantLoginUrl() {
+      const input = document.getElementById('portal-login-url');
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast('社員用ログインURLをコピーしました');
+      }).catch(() => {
+        input.select();
+        document.execCommand('copy');
+        showToast('社員用ログインURLをコピーしました');
+      });
+    }
+
     function syncAllPlanCards(selectedKey) {
       const planKeys = ['trial', 'standard', 'custom'];
       const btnTextMap = {
@@ -1451,7 +1497,6 @@
       planKeys.forEach(key => {
         const isSelected = (key === selectedKey);
 
-        // 1) プラン選択モーダル側カード
         const wCard = document.getElementById('welcome-card-' + key);
         const wBtn = document.getElementById('welcome-btn-' + key);
         if (wCard && wBtn) {
@@ -1465,7 +1510,6 @@
           }
         }
 
-        // 2) 管理・設定 ＞ プラン・見積タブ側カード
         const qCard = document.getElementById('card-plan-' + key);
         const qBtn = document.getElementById('btn-plan-' + key);
         if (qCard && qBtn) {
@@ -1531,23 +1575,32 @@
     }
 
     async function unlockApp() {
-      const pass = document.getElementById('login-pass').value;
-      if (!pass) return;
+      const corp = document.getElementById('login-corp').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+      if (!corp || !pass) {
+        alert('会社コードと社員パスコードを入力してください。');
+        return;
+      }
+
       const btn = document.getElementById('unlock-btn');
       btn.disabled = true;
-      btn.textContent = 'ログイン中...';
+      btn.textContent = '認証中...';
 
       try {
-        const res = await callGasApi('loginWithStaffPasscode', [pass]);
+        const res = await callGasApi('loginTenantAndStaff', [corp, pass]);
         if (res.success) {
+          localStorage.setItem('sf_last_corp', corp);
+          sessionStorage.setItem('sf_token', res.token);
           currentUser = res.staff;
           appSettings = res.settings;
-          appSettings.plan = 'trial'; // 最初はフリープランから開始
+          tenantMeta = { corpCode: res.corpCode, sheetUrl: res.sheetUrl };
+
           sessionStorage.setItem('sf_user', JSON.stringify(currentUser));
           sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
+          sessionStorage.setItem('sf_meta', JSON.stringify(tenantMeta));
           applyLoginState(true);
         } else {
-          alert('パスコードに一致する社員アカウントが見つかりません。');
+          alert(res.reason || 'ログインに失敗しました。');
           document.getElementById('login-pass').value = '';
         }
       } catch (err) {
@@ -1560,7 +1613,9 @@
 
     function lockApp() {
       stopScanner();
+      sessionStorage.removeItem('sf_token');
       sessionStorage.removeItem('sf_user');
+      sessionStorage.removeItem('sf_meta');
       currentUser = null;
       document.getElementById('login-pass').value = '';
       closePlanSelector();
@@ -1671,11 +1726,10 @@
       lastScannedCode = code;
       lastScannedTime = now;
 
-      const staffName = currentUser ? currentUser.name : '';
       showToast(`⚡ ${code} を${contAction}(+1)処理中...`);
 
       try {
-        const res = await callGasApi('recordTransaction', [code, contAction, 1, staffName]);
+        const res = await callGasApi('recordTransaction', [code, contAction, 1]);
         lastTransaction = {
           itemId: res.itemId,
           itemName: res.itemName,
@@ -1697,7 +1751,6 @@
       }
     }
 
-    // ★タブ切り替えバグ修正済み（currentTab で現在タブを厳密管理）
     function switchTab(tabName) {
       currentTab = tabName;
       ['scan', 'list', 'history', 'register', 'tools'].forEach(t => {
@@ -1747,7 +1800,7 @@
 
       try {
         const list = await callGasApi('getGlobalHistory');
-        if (currentTab !== 'history') return; // ★別タブに移動していたら表示しない
+        if (currentTab !== 'history') return;
         document.getElementById('loading-box').classList.add('hidden');
         globalHistoryCache = list || [];
         filterGlobalHistory();
@@ -1805,7 +1858,7 @@
 
       try {
         const res = await callGasApi('getItemInfo', [itemId]);
-        if (currentTab !== 'scan') return; // ★別タブ移動時の割り込み防止
+        if (currentTab !== 'scan') return;
         document.getElementById('loading-box').classList.add('hidden');
         if (!res.found) {
           if (confirm(`商品ID「${res.id}」は未登録です。\n新規登録タブへ移動して登録しますか？`)) {
@@ -1886,14 +1939,13 @@
       const name = document.getElementById('edit-name').value.trim();
       const min = document.getElementById('edit-min').value;
       const note = document.getElementById('edit-note').value.trim();
-      const staff = currentUser ? currentUser.name : '';
 
       const btn = document.getElementById('save-edit-btn');
       btn.disabled = true;
       btn.textContent = '保存中...';
 
       try {
-        await callGasApi('updateItemDetails', [currentItem.id, name, min, note, staff]);
+        await callGasApi('updateItemDetails', [currentItem.id, name, min, note]);
         closeEditModal();
         showToast('商品情報を更新しました');
         fetchItem(currentItem.id);
@@ -1909,12 +1961,11 @@
       if (!currentItem) return;
       if (!confirm(`商品「${currentItem.name}（${currentItem.id}）」をマスタから削除しますか？`)) return;
 
-      const staff = currentUser ? currentUser.name : '';
       const btn = document.getElementById('delete-item-btn');
       btn.disabled = true;
 
       try {
-        await callGasApi('deleteItem', [currentItem.id, staff]);
+        await callGasApi('deleteItem', [currentItem.id]);
         closeEditModal();
         showToast('商品を削除しました');
         switchTab('list');
@@ -1957,14 +2008,13 @@
     async function submitData(type) {
       if (!currentItem) return;
       const qty = document.getElementById('input-qty').value;
-      const staff = currentUser ? currentUser.name : '';
 
       document.getElementById('btn-in').disabled = true;
       document.getElementById('btn-out').disabled = true;
       document.getElementById('btn-count').disabled = true;
 
       try {
-        const res = await callGasApi('recordTransaction', [currentItem.id, type, qty, staff]);
+        const res = await callGasApi('recordTransaction', [currentItem.id, type, qty]);
         lastTransaction = {
           itemId: res.itemId,
           itemName: res.itemName,
@@ -2002,13 +2052,12 @@
       if (!lastTransaction) return;
       if (!confirm(`直前の操作（${lastTransaction.itemName}：${lastTransaction.newStock} → ${lastTransaction.prevStock}）を取り消しますか？`)) return;
 
-      const staff = currentUser ? currentUser.name : '';
       const target = lastTransaction;
       lastTransaction = null;
       updateUndoBanners();
 
       try {
-        const res = await callGasApi('undoLastTransaction', [target.itemId, target.prevStock, staff]);
+        const res = await callGasApi('undoLastTransaction', [target.itemId, target.prevStock]);
         showToast(`取り消し完了（現在庫: ${res.restoredStock}）`);
         if (!document.getElementById('detail-section').classList.contains('hidden') && currentItem && currentItem.id === target.itemId) {
           fetchItem(currentItem.id);
@@ -2068,7 +2117,7 @@
 
       try {
         const items = await callGasApi('getAllItems');
-        if (currentTab !== 'list') return; // ★別タブ移動時の割り込み防止
+        if (currentTab !== 'list') return;
         document.getElementById('loading-box').classList.add('hidden');
         allItemsCache = items || [];
         const lowCount = allItemsCache.filter(i => i.stock <= i.minStock).length;
@@ -2209,7 +2258,6 @@
       const stock = document.getElementById('new-stock').value;
       const min = document.getElementById('new-min').value;
       const note = document.getElementById('new-note').value.trim();
-      const staff = currentUser ? currentUser.name : '';
 
       if (!id || !name) return alert('商品IDと商品名を入力してください。');
 
@@ -2218,7 +2266,7 @@
       btn.textContent = '登録中...';
 
       try {
-        const res = await callGasApi('createNewItem', [id, name, stock, min, note, staff]);
+        const res = await callGasApi('createNewItem', [id, name, stock, min, note]);
         document.getElementById('new-id').value = '';
         document.getElementById('new-name').value = '';
         document.getElementById('new-stock').value = '0';
@@ -2331,7 +2379,6 @@
       }
     }
 
-    // ★ポータル用：現在の全在庫データをExcel出力
     async function exportCurrentInventoryExcel() {
       showToast('在庫データを取得中...');
       try {
@@ -2436,14 +2483,13 @@
       }
 
       const cat = document.getElementById('chat-category').value;
-      const sender = currentUser ? `${currentUser.name} (${currentUser.id})` : '担当者';
       const msg = document.getElementById('chat-message').value.trim();
       if (!msg) return alert('メッセージ内容を入力してください。');
 
       const btn = document.getElementById('chat-send-btn');
       btn.disabled = true;
       try {
-        const list = await callGasApi('sendSupportMessage', [cat, sender, msg]);
+        const list = await callGasApi('sendSupportMessage', [cat, msg]);
         document.getElementById('chat-message').value = '';
         renderSupportHistory(list);
         showToast('送信完了（メール通知しました）');
