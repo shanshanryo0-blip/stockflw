@@ -76,7 +76,7 @@
       box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
     }
 
-    /* ★初回プラン選択モーダル */
+    /* プラン選択モーダル */
     .plan-welcome-screen {
       position: fixed;
       inset: 0;
@@ -313,6 +313,7 @@
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.15s ease;
+      text-decoration: none;
     }
     .btn:active { transform: scale(0.98); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -321,6 +322,7 @@
     .btn-in { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; }
     .btn-out { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; }
     .btn-count { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: #fff; }
+    .btn-sheet { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
     .btn-outline { background: var(--surface); color: var(--text-main); border: 1.5px solid var(--border); }
     .btn-danger-outline { background: var(--out-soft); color: var(--out-color); border: 1.5px solid #fecaca; }
 
@@ -507,26 +509,52 @@
     }
     .inv-count.low { background: var(--out-soft); color: var(--out-color); border-color: #fca5a5; }
 
+    /* 管理・設定サブタブ（5分割） */
     .sub-tabs {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       background: #e2e8f0;
       padding: 4px;
       border-radius: 12px;
       margin-bottom: 16px;
-      gap: 4px;
+      gap: 3px;
     }
     .sub-tab {
-      padding: 9px 4px;
+      padding: 9px 2px;
       border: none;
       background: transparent;
       border-radius: 9px;
-      font-size: 0.76rem;
+      font-size: 0.71rem;
       font-weight: 700;
       color: var(--text-sub);
       cursor: pointer;
+      white-space: nowrap;
     }
     .sub-tab.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-xs); }
+
+    /* ポータルカード */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .portal-link-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+    .portal-link-card:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
 
     .staff-row {
       display: flex;
@@ -561,10 +589,11 @@
     .chat-cat { background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px; }
     .admin-reply-box { margin-top: 10px; padding: 10px 12px; background: var(--in-soft); border-left: 4px solid var(--in-color); border-radius: 6px; font-size: 0.86rem; color: #065f46; }
 
-    /* 料金プランカード */
+    /* ★料金プランカード（選択中の強調表示強化） */
     .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 16px; }
     @media (min-width: 720px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
     .plan-card {
+      position: relative;
       background: var(--surface);
       border: 2px solid var(--border);
       border-radius: 18px;
@@ -572,11 +601,27 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: all 0.2s ease;
     }
     .plan-card.selected-plan {
-      border-color: var(--primary);
-      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 45%);
-      box-shadow: var(--shadow-md);
+      border: 3px solid var(--primary);
+      background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 35%, #ffffff 100%);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
+      transform: translateY(-2px);
+    }
+    .current-plan-ribbon {
+      display: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .plan-card.selected-plan .current-plan-ribbon {
+      display: block;
     }
     .plan-features {
       font-size: 0.82rem;
@@ -695,20 +740,23 @@
     </div>
   </div>
 
-  <!-- 2. ★ログイン直後のプラン選択画面（最初はフリープランから開始） -->
+  <!-- 2. プラン選択・切り替えモーダル（選択中プランを強調表示） -->
   <div id="plan-welcome-screen" class="plan-welcome-screen hidden">
     <div class="plan-welcome-wrap">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="background:var(--primary-soft); color:var(--primary); font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px;">StockFlow プラン設定</span>
+        <button onclick="closePlanSelector()" style="border:none; background:none; font-size:1.3rem; cursor:pointer; color:var(--text-sub);">✕</button>
+      </div>
       <div style="text-align: center; margin-bottom: 20px;">
-        <span style="display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:8px;">StockFlow ご利用プラン選択</span>
-        <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">まずは「フリープラン」でお試しいただけます</h2>
-        <p style="margin: 0; font-size: 0.86rem; color: var(--text-sub);">ご希望のプランを選択してスタートしてください（後からいつでも変更・見積書作成が可能です）</p>
+        <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">ご利用プランを選択してください</h2>
+        <p style="margin: 0; font-size: 0.86rem; color: var(--text-sub);">最初は「フリープラン」から無料でお試しいただけます（後からいつでも切替可能）</p>
       </div>
 
       <div class="grid-3">
-        <!-- フリープラン（初期推奨） -->
+        <!-- フリープラン -->
         <div class="plan-card selected-plan" id="welcome-card-trial">
           <div>
-            <div style="display:inline-block; background:var(--in-color); color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">まずはここから開始</div>
+            <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
             <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フリープラン</h3>
             <div style="font-size:1.3rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
             <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">制限はありますが、スマホでのQR読み取りと在庫一覧を無料でお試しいただけます。</p>
@@ -719,13 +767,14 @@
               <li class="disabled-feat">社員追加・Excel一括・チャット保守</li>
             </ul>
           </div>
-          <button class="btn btn-in" onclick="chooseInitialPlan('trial')">フリープランで始める（無料）</button>
+          <button id="welcome-btn-trial" class="btn btn-primary" onclick="chooseInitialPlan('trial')">✓ フリープランで開始（選択中）</button>
         </div>
 
         <!-- 現場導入セットアップ -->
         <div class="plan-card" id="welcome-card-standard">
           <div>
-            <div style="display:inline-block; background:var(--primary); color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">一番人気・買い切り</div>
+            <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
+            <div style="display:inline-block; background:var(--warn-soft); color:#b45309; border:1px solid #fcd34d; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
             <h3 style="margin:0 0 6px 0; font-size:1.1rem;">現場導入セットアップ</h3>
             <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
             <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">毎月の固定費なしで、StockFlowの<strong>全機能</strong>が使える標準導入プランです。</p>
@@ -736,13 +785,13 @@
               <li>専用環境構築＆初期設定サポート</li>
             </ul>
           </div>
-          <button class="btn btn-primary" onclick="chooseInitialPlan('standard')">全機能プランで始める</button>
+          <button id="welcome-btn-standard" class="btn btn-outline" onclick="chooseInitialPlan('standard')">このプランに切り替える</button>
         </div>
 
         <!-- フルカスタム＆安心保守 -->
         <div class="plan-card" id="welcome-card-custom">
           <div>
-            <div style="display:inline-block; background:#0f172a; color:#fff; font-size:0.72rem; font-weight:800; padding:3px 9px; border-radius:999px; margin-bottom:8px;">独自開発＋専任保守</div>
+            <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
             <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フルカスタム＆安心保守</h3>
             <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 <span style="font-size:0.85rem;">/ 月 5,000円</span></div>
             <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">全機能の利用に加え、自社専用のカスタマイズとチャット保守が付きます。</p>
@@ -753,7 +802,7 @@
               <li>不具合対応・操作サポート無制限</li>
             </ul>
           </div>
-          <button class="btn btn-outline" onclick="chooseInitialPlan('custom')">フルカスタムプランで始める</button>
+          <button id="welcome-btn-custom" class="btn btn-outline" onclick="chooseInitialPlan('custom')">このプランに切り替える</button>
         </div>
       </div>
     </div>
@@ -788,12 +837,11 @@
 
     <!-- 【タブ1】スキャン・連続スキャン -->
     <section id="scan-section" class="narrow-container">
-      <!-- フリープラン制限通知バー -->
       <div id="free-plan-banner" class="free-limit-bar">
         <div>
           <strong>現在フリープラン利用中</strong>（商品10件まで・一部機能制限）
         </div>
-        <button class="upgrade-mini-btn" onclick="openPlanSelector()">全機能を開放</button>
+        <button class="upgrade-mini-btn" onclick="openPlanSelector()">プラン変更</button>
       </div>
 
       <div class="kpi-grid">
@@ -1002,25 +1050,72 @@
       </div>
     </section>
 
-    <!-- 【タブ5】管理・設定 -->
+    <!-- 【タブ5】管理・設定（5つのサブタブ） -->
     <section id="tools-section" class="hidden">
       <div class="no-print sub-tabs">
-        <button id="sub-excel" class="sub-tab active" onclick="switchSubTab('excel')">📊 Excel一括</button>
+        <button id="sub-portal" class="sub-tab active" onclick="switchSubTab('portal')">📊 ポータル</button>
+        <button id="sub-excel" class="sub-tab" onclick="switchSubTab('excel')">📥 Excel一括</button>
         <button id="sub-settings" class="sub-tab" onclick="switchSubTab('settings')">⚙️ 社員・設定</button>
         <button id="sub-chat" class="sub-tab" onclick="switchSubTab('chat')">💬 保守窓口</button>
         <button id="sub-quote" class="sub-tab" onclick="switchSubTab('quote')">📄 プラン・見積</button>
       </div>
 
-      <!-- サブ1：エクセル一括登録 -->
-      <div id="panel-excel" class="narrow-container">
+      <!-- ★サブ0：スプレッドシート＆管理ポータルサイト -->
+      <div id="panel-portal" class="narrow-container">
+        <div class="card" style="background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 60%); border-color: #a7f3d0;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <div style="width:42px; height:42px; background:#16a34a; color:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">📊</div>
+            <div>
+              <h2 style="margin:0; font-size:1.08rem; font-weight:800;">データベースポータル（Googleスプレッドシート）</h2>
+              <div style="font-size:0.78rem; color:#065f46; font-weight:600;">クラウド上の元データを直接閲覧・編集・バックアップできます</div>
+            </div>
+          </div>
+
+          <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="btn btn-sheet" style="margin-bottom:12px;">
+            🔗 Googleスプレッドシート本体を別タブで開く ↗
+          </a>
+
+          <div class="portal-grid">
+            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">📦 商品マスタ</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">商品ID・現在庫・発注点の一覧表を直接編集</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">🕒 入出庫履歴</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">全スタッフの操作ログと日時記録を確認</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">👥 社員マスタ</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">社員パスコードや権限のリストを確認</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1b9uv90YteLiA3m6BSQZ-dG2W8taxq84fTo5ik-ugMV8/edit" target="_blank" rel="noopener" class="portal-link-card">
+              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">💬 保守サポート履歴</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">F列に返信を記入するとアプリ側へ反映</div>
+            </a>
+          </div>
+        </div>
+
         <div class="card">
-          <h2 class="card-title"><span>📊 エクセル・CSVから一括登録</span></h2>
+          <h2 class="card-title"><span>💾 データバックアップ（Excel出力）</span></h2>
+          <p style="font-size:0.84rem; color:var(--text-sub); margin-top:0;">
+            現在の在庫一覧データを手元のPC・スマホにExcelファイル（.xlsx）として即時ダウンロードします。
+          </p>
+          <button type="button" class="btn btn-outline" onclick="exportCurrentInventoryExcel()">
+            📥 現在の全在庫データをExcelダウンロード
+          </button>
+        </div>
+      </div>
+
+      <!-- サブ1：エクセル一括登録 -->
+      <div id="panel-excel" class="narrow-container hidden">
+        <div class="card">
+          <h2 class="card-title"><span>📥 エクセル・CSVから一括登録</span></h2>
           <div style="background: var(--bg); padding: 12px; border-radius: 10px; font-size: 0.84rem; margin-bottom: 14px;">
             <strong>列の並び順（1行目は見出し）：</strong><br>
             A列：商品ID ／ B列：商品名 ／ C列：現在庫数 ／ D列：発注点 ／ E列：備考
           </div>
           <button type="button" class="btn btn-outline" style="margin-bottom: 12px;" onclick="downloadSampleExcel()">
-            📥 登録用のエクセル雛形をダウンロード
+            📄 登録用のエクセル雛形をダウンロード
           </button>
           <label class="form-label">エクセルファイルを選択（.xlsx / .csv）</label>
           <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv" onchange="handleExcelFile(event)" style="padding: 10px; background: #fff;">
@@ -1109,13 +1204,14 @@
         </div>
       </div>
 
-      <!-- サブ4：料金プラン＆簡易見積書 -->
+      <!-- サブ4：料金プラン＆簡易見積書（選択中プラン強調表示） -->
       <div id="panel-quote" class="hidden">
         <div class="no-print">
           <div class="grid-3">
             <!-- フリープラン -->
-            <div class="plan-card" id="card-plan-trial">
+            <div class="plan-card selected-plan" id="card-plan-trial">
               <div>
+                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
                 <h3 style="margin:0 0 6px 0;">フリープラン</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 / 月額 0円</div>
                 <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">制限はありますが、スマホでのQR読み取りと在庫一覧を無料でお試しいただけます。</p>
@@ -1125,13 +1221,14 @@
                   <li class="disabled-feat">連続スキャン・発注コピー・社員追加</li>
                 </ul>
               </div>
-              <button id="btn-plan-trial" class="btn btn-outline" onclick="selectPlanForQuote('trial')">このプランを選択</button>
+              <button id="btn-plan-trial" class="btn btn-primary" onclick="selectPlanForQuote('trial')">✓ 選択中（適用＆見積反映済）</button>
             </div>
 
             <!-- 現場導入セットアップ -->
-            <div class="plan-card selected-plan" id="card-plan-standard">
+            <div class="plan-card" id="card-plan-standard">
               <div>
-                <div style="display:inline-block; background:var(--primary); color:#fff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
+                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
+                <div style="display:inline-block; background:var(--warn-soft); color:#b45309; border:1px solid #fcd34d; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
                 <h3 style="margin:0 0 6px 0;">現場導入セットアップ</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 / 月額 0円</div>
                 <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">毎月の固定費なしで、StockFlowの<strong>全機能</strong>が使える標準プランです。</p>
@@ -1141,12 +1238,13 @@
                   <li>専用環境構築＆初期設定一式</li>
                 </ul>
               </div>
-              <button id="btn-plan-standard" class="btn btn-primary" onclick="selectPlanForQuote('standard')">✓ 選択中（プラン適用＆見積反映）</button>
+              <button id="btn-plan-standard" class="btn btn-outline" onclick="selectPlanForQuote('standard')">このプランを選択</button>
             </div>
 
             <!-- フルカスタム＆安心保守 -->
             <div class="plan-card" id="card-plan-custom">
               <div>
+                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
                 <h3 style="margin:0 0 6px 0;">フルカスタム＆安心保守</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 / 月 5,000円</div>
                 <p style="font-size:0.82rem; color:var(--text-sub); margin-bottom:10px;">全機能の利用に加え、自社専用のカスタマイズとチャット保守が付きます。</p>
@@ -1169,8 +1267,8 @@
             <div class="form-field">
               <label class="form-label">プラン選択（選ぶとアプリの動作プランも切り替わります）</label>
               <select id="q-plan" onchange="selectPlanForQuote(this.value)">
-                <option value="trial">フリープラン（初期 0円 / 月額 0円）</option>
-                <option value="standard" selected>現場導入セットアップ（初期 30,000円 / 月額 0円）</option>
+                <option value="trial" selected>フリープラン（初期 0円 / 月額 0円）</option>
+                <option value="standard">現場導入セットアップ（初期 30,000円 / 月額 0円）</option>
                 <option value="custom">フルカスタム＆安心保守（初期 50,000円 / 月額 5,000円）</option>
               </select>
             </div>
@@ -1196,7 +1294,7 @@
           </div>
           <div style="background:var(--primary-soft); border:1px solid var(--primary-border); padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
             <strong>初期費用 合計（税込）</strong>
-            <strong style="font-size:1.35rem; color:var(--primary);" id="p-total-tax">33,000 円</strong>
+            <strong style="font-size:1.35rem; color:var(--primary);" id="p-total-tax">0 円</strong>
           </div>
           <table class="quote-table">
             <thead><tr><th>項目</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th></tr></thead>
@@ -1292,9 +1390,9 @@
     let html5QrCode = null;
     let listQrCode = null;
     let currentUser = null;
-    // ★初期はフリープラン（trial）から開始
     let appSettings = { orgName: 'StockFlow', notifyEmail: '', scanDelay: 2, plan: 'trial' };
     let currentItem = null;
+    let currentTab = 'scan'; // ★タブ重なり防止用の現在地トラッカー
     let detailMode = 'inout';
     let scanMode = 'single';
     let contAction = '入庫';
@@ -1324,6 +1422,7 @@
 
       const today = new Date();
       document.getElementById('p-date').textContent = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+      syncAllPlanCards(appSettings.plan || 'trial');
       updateQuote();
     };
 
@@ -1333,15 +1432,55 @@
       document.getElementById('header-user-badge').textContent = `👤 ${currentUser.name}`;
       document.getElementById('input-staff').value = currentUser.name;
 
-      // 初回ログイン時はプラン選択画面を表示（最初はフリープランが選択状態）
-      if (showPlanScreen) {
-        document.getElementById('plan-welcome-screen').classList.remove('hidden');
-      }
       syncPlanUI();
+      if (showPlanScreen) {
+        openPlanSelector();
+      }
       refreshDashboardKPI();
     }
 
-    // プラン状態に合わせてUIのロック表示・バッジを同期
+    // ★初回モーダル＆設定画面の「選択中プラン強調表示」を一括同期
+    function syncAllPlanCards(selectedKey) {
+      const planKeys = ['trial', 'standard', 'custom'];
+      const btnTextMap = {
+        trial: 'フリープランで開始（選択中）',
+        standard: '現場導入プランで開始（選択中）',
+        custom: 'フルカスタムプランで開始（選択中）'
+      };
+
+      planKeys.forEach(key => {
+        const isSelected = (key === selectedKey);
+
+        // 1) プラン選択モーダル側カード
+        const wCard = document.getElementById('welcome-card-' + key);
+        const wBtn = document.getElementById('welcome-btn-' + key);
+        if (wCard && wBtn) {
+          wCard.classList.toggle('selected-plan', isSelected);
+          if (isSelected) {
+            wBtn.className = 'btn btn-primary';
+            wBtn.textContent = '✓ ' + btnTextMap[key];
+          } else {
+            wBtn.className = 'btn btn-outline';
+            wBtn.textContent = 'このプランに切り替える';
+          }
+        }
+
+        // 2) 管理・設定 ＞ プラン・見積タブ側カード
+        const qCard = document.getElementById('card-plan-' + key);
+        const qBtn = document.getElementById('btn-plan-' + key);
+        if (qCard && qBtn) {
+          qCard.classList.toggle('selected-plan', isSelected);
+          if (isSelected) {
+            qBtn.className = 'btn btn-primary';
+            qBtn.textContent = '✓ 選択中（適用＆見積反映済）';
+          } else {
+            qBtn.className = 'btn btn-outline';
+            qBtn.textContent = 'このプランを選択';
+          }
+        }
+      });
+    }
+
     function syncPlanUI() {
       const plan = appSettings.plan || 'trial';
       const isFree = (plan === 'trial');
@@ -1360,20 +1499,26 @@
       }
 
       document.getElementById('q-plan').value = plan;
+      syncAllPlanCards(plan);
       updateQuote();
     }
 
     function openPlanSelector() {
       stopScanner();
+      syncAllPlanCards(appSettings.plan || 'trial');
       document.getElementById('plan-welcome-screen').classList.remove('hidden');
     }
 
-    async function chooseInitialPlan(planKey) {
+    function closePlanSelector() {
       document.getElementById('plan-welcome-screen').classList.add('hidden');
+    }
+
+    async function chooseInitialPlan(planKey) {
+      closePlanSelector();
       appSettings.plan = planKey;
       sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
       syncPlanUI();
-      showToast(`「${PLAN_LABELS[planKey]}」で開始しました`);
+      showToast(`「${PLAN_LABELS[planKey]}」を適用しました`);
 
       try {
         const updated = await callGasApi('updateActivePlan', [planKey]);
@@ -1397,8 +1542,7 @@
         if (res.success) {
           currentUser = res.staff;
           appSettings = res.settings;
-          // 最初はフリープランを初期選択にする
-          appSettings.plan = 'trial';
+          appSettings.plan = 'trial'; // 最初はフリープランから開始
           sessionStorage.setItem('sf_user', JSON.stringify(currentUser));
           sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
           applyLoginState(true);
@@ -1419,7 +1563,7 @@
       sessionStorage.removeItem('sf_user');
       currentUser = null;
       document.getElementById('login-pass').value = '';
-      document.getElementById('plan-welcome-screen').classList.add('hidden');
+      closePlanSelector();
       document.getElementById('lock-screen').classList.remove('hidden');
     }
 
@@ -1553,7 +1697,9 @@
       }
     }
 
+    // ★タブ切り替えバグ修正済み（currentTab で現在タブを厳密管理）
     function switchTab(tabName) {
+      currentTab = tabName;
       ['scan', 'list', 'history', 'register', 'tools'].forEach(t => {
         document.getElementById('tab-' + t).classList.remove('active');
       });
@@ -1586,12 +1732,13 @@
     }
 
     function switchSubTab(subName) {
-      ['excel', 'settings', 'chat', 'quote'].forEach(name => {
+      ['portal', 'excel', 'settings', 'chat', 'quote'].forEach(name => {
         document.getElementById('sub-' + name).classList.toggle('active', name === subName);
         document.getElementById('panel-' + name).classList.toggle('hidden', name !== subName);
       });
       if (subName === 'chat') loadSupportHistory();
       if (subName === 'settings') loadSettingsAndStaff();
+      if (subName === 'quote') syncAllPlanCards(appSettings.plan || 'trial');
     }
 
     async function loadGlobalHistory() {
@@ -1600,12 +1747,13 @@
 
       try {
         const list = await callGasApi('getGlobalHistory');
+        if (currentTab !== 'history') return; // ★別タブに移動していたら表示しない
         document.getElementById('loading-box').classList.add('hidden');
         globalHistoryCache = list || [];
         filterGlobalHistory();
         document.getElementById('history-section').classList.remove('hidden');
       } catch (err) {
-        onError(err);
+        if (currentTab === 'history') onError(err);
       }
     }
 
@@ -1650,12 +1798,14 @@
     }
 
     async function fetchItem(itemId) {
+      currentTab = 'scan';
       document.getElementById('scan-section').classList.add('hidden');
       document.getElementById('detail-section').classList.add('hidden');
       document.getElementById('loading-box').classList.remove('hidden');
 
       try {
         const res = await callGasApi('getItemInfo', [itemId]);
+        if (currentTab !== 'scan') return; // ★別タブ移動時の割り込み防止
         document.getElementById('loading-box').classList.add('hidden');
         if (!res.found) {
           if (confirm(`商品ID「${res.id}」は未登録です。\n新規登録タブへ移動して登録しますか？`)) {
@@ -1716,7 +1866,7 @@
         updateUndoBanners();
         document.getElementById('detail-section').classList.remove('hidden');
       } catch (err) {
-        onError(err);
+        if (currentTab === 'scan') onError(err);
       }
     }
 
@@ -1918,6 +2068,7 @@
 
       try {
         const items = await callGasApi('getAllItems');
+        if (currentTab !== 'list') return; // ★別タブ移動時の割り込み防止
         document.getElementById('loading-box').classList.add('hidden');
         allItemsCache = items || [];
         const lowCount = allItemsCache.filter(i => i.stock <= i.minStock).length;
@@ -1925,7 +2076,7 @@
         filterList();
         document.getElementById('list-section').classList.remove('hidden');
       } catch (err) {
-        onError(err);
+        if (currentTab === 'list') onError(err);
       }
     }
 
@@ -2180,6 +2331,26 @@
       }
     }
 
+    // ★ポータル用：現在の全在庫データをExcel出力
+    async function exportCurrentInventoryExcel() {
+      showToast('在庫データを取得中...');
+      try {
+        const items = await callGasApi('getAllItems');
+        const wb = XLSX.utils.book_new();
+        const wsData = [['商品ID', '商品名', '現在庫数', '発注点', '備考']];
+        items.forEach(i => {
+          wsData.push([i.id, i.name, i.stock, i.minStock, i.note]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, '在庫一覧');
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `StockFlow_在庫データ_${today}.xlsx`);
+        showToast('Excelファイルをダウンロードしました');
+      } catch (err) {
+        alert('出力エラー: ' + err.message);
+      }
+    }
+
     function downloadSampleExcel() {
       const wb = XLSX.utils.book_new();
       const wsData = [
@@ -2312,7 +2483,7 @@
       appSettings.plan = planKey;
       sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
       syncPlanUI();
-      showToast(`「${PLAN_LABELS[planKey]}」を適用＆見積書に反映しました`);
+      showToast(`「${PLAN_LABELS[planKey]}」を選択しました`);
 
       try {
         await callGasApi('updateActivePlan', [planKey]);
@@ -2321,29 +2492,12 @@
       }
     }
 
-    function syncPlanCardSelection(selectedKey) {
-      ['trial', 'standard', 'custom'].forEach(key => {
-        const card = document.getElementById('card-plan-' + key);
-        const btn = document.getElementById('btn-plan-' + key);
-        if (!card || !btn) return;
-        if (key === selectedKey) {
-          card.classList.add('selected-plan');
-          btn.className = 'btn btn-primary';
-          btn.textContent = '✓ 選択中（適用＆見積反映済）';
-        } else {
-          card.classList.remove('selected-plan');
-          btn.className = 'btn btn-outline';
-          btn.textContent = 'このプランを選択';
-        }
-      });
-    }
-
     function updateQuote() {
       const clientInput = document.getElementById('q-client').value.trim();
       document.getElementById('p-client-name').textContent = (clientInput || 'お客様') + ' 御中';
 
       const planKey = document.getElementById('q-plan').value;
-      syncPlanCardSelection(planKey);
+      syncAllPlanCards(planKey);
 
       const rows = [];
       let monthlyFee = 0;
