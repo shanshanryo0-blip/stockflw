@@ -731,8 +731,8 @@
       <div class="form-field">
         <input type="password" id="login-pass" placeholder="社員パスコード（例: 1234）" inputmode="numeric" onkeydown="if(event.key==='Enter') unlockApp()">
       </div>
-      <button id="unlock-btn" class="btn btn-primary" onclick="unlockApp()" style="margin-bottom: 10px;">ログイン</button>
-      <a href="index.html" style="font-size: 0.8rem; color: var(--text-sub); text-decoration: none;">← トップページ（サービス紹介）へ戻る</a>
+      <button id="unlock-btn" class="btn btn-primary" onclick="unlockApp()" style="margin-bottom: 12px;">ログイン</button>
+      <a href="index.html" style="font-size: 0.82rem; color: var(--text-sub); text-decoration: none; font-weight: 600;">← トップページに戻る</a>
     </div>
   </div>
 
@@ -816,7 +816,7 @@
       <div style="display: flex; align-items: center; gap: 6px;">
         <button class="plan-pill-btn" id="header-plan-badge" onclick="openPlanSelector()">フリープラン ▾</button>
         <span class="user-chip" id="header-user-badge">👤 未ログイン</span>
-        <button class="header-lock-btn" onclick="lockApp()">切替</button>
+        <button class="header-lock-btn" onclick="lockApp()">ログアウト</button>
       </div>
     </div>
   </header>
@@ -1617,6 +1617,7 @@
       sessionStorage.removeItem('sf_token');
       sessionStorage.removeItem('sf_user');
       sessionStorage.removeItem('sf_meta');
+      currentUser = null;
       window.location.href = 'index.html';
     }
 
@@ -1923,4 +1924,671 @@
 
     function openEditModal() {
       if (!currentItem) return;
-      document.getElementById('edit-name').value
+      document.getElementById('edit-name').value = currentItem.name;
+      document.getElementById('edit-min').value = currentItem.minStock;
+      document.getElementById('edit-note').value = currentItem.note;
+      document.getElementById('edit-item-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-item-modal').classList.add('hidden');
+    }
+
+    async function submitEditItem() {
+      const name = document.getElementById('edit-name').value.trim();
+      const min = document.getElementById('edit-min').value;
+      const note = document.getElementById('edit-note').value.trim();
+
+      const btn = document.getElementById('save-edit-btn');
+      btn.disabled = true;
+      btn.textContent = '保存中...';
+
+      try {
+        await callGasApi('updateItemDetails', [currentItem.id, name, min, note]);
+        closeEditModal();
+        showToast('商品情報を更新しました');
+        fetchItem(currentItem.id);
+      } catch (err) {
+        alert('更新エラー: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '変更を保存';
+      }
+    }
+
+    async function submitDeleteItem() {
+      if (!currentItem) return;
+      if (!confirm(`商品「${currentItem.name}（${currentItem.id}）」をマスタから削除しますか？`)) return;
+
+      const btn = document.getElementById('delete-item-btn');
+      btn.disabled = true;
+
+      try {
+        await callGasApi('deleteItem', [currentItem.id]);
+        closeEditModal();
+        showToast('商品を削除しました');
+        switchTab('list');
+      } catch (err) {
+        alert('削除エラー: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function changeQty(delta) {
+      const input = document.getElementById('input-qty');
+      const minVal = (detailMode === 'count') ? 0 : 1;
+      input.value = Math.max(minVal, (Number(input.value) || 0) + delta);
+    }
+
+    function setDetailMode(mode) {
+      detailMode = mode;
+      document.getElementById('mode-inout-btn').classList.toggle('active', mode === 'inout');
+      document.getElementById('mode-count-btn').classList.toggle('active', mode === 'count');
+
+      const qtyInput = document.getElementById('input-qty');
+      const qtyLabel = document.getElementById('qty-field-label');
+
+      if (mode === 'inout') {
+        qtyLabel.textContent = '入出庫する数量';
+        qtyInput.min = 1;
+        qtyInput.value = 1;
+        document.getElementById('inout-buttons').classList.remove('hidden');
+        document.getElementById('count-buttons').classList.add('hidden');
+      } else {
+        qtyLabel.textContent = '実際に数えた在庫数（実数）';
+        qtyInput.min = 0;
+        qtyInput.value = currentItem ? currentItem.stock : 0;
+        document.getElementById('inout-buttons').classList.add('hidden');
+        document.getElementById('count-buttons').classList.remove('hidden');
+      }
+    }
+
+    async function submitData(type) {
+      if (!currentItem) return;
+      const qty = document.getElementById('input-qty').value;
+
+      document.getElementById('btn-in').disabled = true;
+      document.getElementById('btn-out').disabled = true;
+      document.getElementById('btn-count').disabled = true;
+
+      try {
+        const res = await callGasApi('recordTransaction', [currentItem.id, type, qty]);
+        lastTransaction = {
+          itemId: res.itemId,
+          itemName: res.itemName,
+          prevStock: res.prevStock,
+          newStock: res.newStock,
+          type: res.type
+        };
+        showToast(`${res.type}完了（現在庫: ${res.newStock}）`);
+        fetchItem(currentItem.id);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        document.getElementById('btn-in').disabled = false;
+        document.getElementById('btn-out').disabled = false;
+        document.getElementById('btn-count').disabled = false;
+      }
+    }
+
+    function updateUndoBanners() {
+      const mainBanner = document.getElementById('undo-banner');
+      const detailBanner = document.getElementById('detail-undo-banner');
+      if (!lastTransaction) {
+        mainBanner.classList.add('hidden');
+        detailBanner.classList.add('hidden');
+        return;
+      }
+      const msg = `直前: ${lastTransaction.itemName}（${lastTransaction.type}：${lastTransaction.prevStock} → ${lastTransaction.newStock}）`;
+      document.getElementById('undo-text').textContent = msg;
+      document.getElementById('detail-undo-text').textContent = msg;
+      mainBanner.classList.remove('hidden');
+      detailBanner.classList.remove('hidden');
+    }
+
+    async function executeUndo() {
+      if (!lastTransaction) return;
+      if (!confirm(`直前の操作（${lastTransaction.itemName}：${lastTransaction.newStock} → ${lastTransaction.prevStock}）を取り消しますか？`)) return;
+
+      const target = lastTransaction;
+      lastTransaction = null;
+      updateUndoBanners();
+
+      try {
+        const res = await callGasApi('undoLastTransaction', [target.itemId, target.prevStock]);
+        showToast(`取り消し完了（現在庫: ${res.restoredStock}）`);
+        if (!document.getElementById('detail-section').classList.contains('hidden') && currentItem && currentItem.id === target.itemId) {
+          fetchItem(currentItem.id);
+        } else {
+          refreshDashboardKPI();
+        }
+      } catch (err) {
+        alert('取り消しエラー: ' + err.message);
+      }
+    }
+
+    function downloadQrLabel() {
+      if (!currentItem) return;
+      const source = document.querySelector('#item-qrcode canvas') || document.querySelector('#item-qrcode img');
+      if (!source) return;
+
+      const labelCanvas = document.createElement('canvas');
+      labelCanvas.width = 360;
+      labelCanvas.height = 440;
+      const ctx = labelCanvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 360, 440);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(4, 4, 352, 432);
+      ctx.drawImage(source, 50, 32, 260, 260);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 26px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(currentItem.id, 180, 342);
+
+      ctx.fillStyle = '#475569';
+      ctx.font = 'bold 20px sans-serif';
+      const dispName = currentItem.name.length > 14 ? currentItem.name.slice(0, 14) + '…' : currentItem.name;
+      ctx.fillText(dispName, 180, 382);
+
+      const link = document.createElement('a');
+      link.download = `QR_${currentItem.id}.png`;
+      link.href = labelCanvas.toDataURL('image/png');
+      link.click();
+      showToast('QR画像を保存しました');
+    }
+
+    function resetToScan() {
+      document.getElementById('detail-section').classList.add('hidden');
+      document.getElementById('loading-box').classList.add('hidden');
+      document.getElementById('scan-section').classList.remove('hidden');
+      document.getElementById('manual-id').value = '';
+      updateUndoBanners();
+    }
+
+    async function loadInventoryList() {
+      document.getElementById('list-section').classList.add('hidden');
+      document.getElementById('loading-box').classList.remove('hidden');
+
+      try {
+        const items = await callGasApi('getAllItems');
+        if (currentTab !== 'list') return;
+        document.getElementById('loading-box').classList.add('hidden');
+        allItemsCache = items || [];
+        const lowCount = allItemsCache.filter(i => i.stock <= i.minStock).length;
+        document.getElementById('low-count-badge').textContent = lowCount;
+        filterList();
+        document.getElementById('list-section').classList.remove('hidden');
+      } catch (err) {
+        if (currentTab === 'list') onError(err);
+      }
+    }
+
+    function setStockFilter(mode) {
+      stockFilterMode = mode;
+      document.getElementById('pill-all').classList.toggle('active', mode === 'all');
+      document.getElementById('pill-low').classList.toggle('active', mode === 'low');
+      document.getElementById('order-copy-bar').classList.toggle('hidden', mode !== 'low');
+      filterList();
+    }
+
+    function copyLowStockOrderList() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('📋 要発注リストの一括コピーは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
+      const lowItems = allItemsCache.filter(i => i.stock <= i.minStock);
+      if (lowItems.length === 0) {
+        showToast('現在、要発注の商品はありません');
+        return;
+      }
+      const today = new Date();
+      const dateStr = `${today.getMonth() + 1}/${today.getDate()}`;
+      const lines = [`【発注依頼リスト（${dateStr}時点）】`];
+      lowItems.forEach(i => {
+        lines.push(`・${i.name}（${i.id}）：現在庫 ${i.stock}個 / 発注点 ${i.minStock}個`);
+      });
+      const text = lines.join('\n');
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 発注リストをクリップボードにコピーしました！');
+      }).catch(() => {
+        alert(text);
+      });
+    }
+
+    function filterList() {
+      const keyword = document.getElementById('search-input').value.toLowerCase().trim();
+      let filtered = allItemsCache;
+      if (stockFilterMode === 'low') filtered = filtered.filter(item => item.stock <= item.minStock);
+      if (keyword) {
+        filtered = filtered.filter(item => 
+          item.id.toLowerCase().includes(keyword) ||
+          item.name.toLowerCase().includes(keyword) ||
+          item.note.toLowerCase().includes(keyword)
+        );
+      }
+
+      const listEl = document.getElementById('inventory-list');
+      listEl.innerHTML = '';
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<li style="padding: 28px; text-align: center; color: var(--text-sub);">該当する商品はありません</li>';
+        return;
+      }
+      filtered.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'inv-card';
+        li.onclick = () => {
+          document.getElementById('tab-list').classList.remove('active');
+          document.getElementById('tab-scan').classList.add('active');
+          document.getElementById('list-section').classList.add('hidden');
+          fetchItem(item.id);
+        };
+        const isLow = item.stock <= item.minStock;
+        const lowBadge = isLow ? `<span class="low-tag">要発注 (発注点:${item.minStock})</span>` : '';
+        const noteText = item.note ? ` ・ ${item.note}` : '';
+        li.innerHTML = `
+          <div>
+            <div class="inv-name">${item.name}${lowBadge}</div>
+            <div class="inv-sub">${item.id}${noteText}</div>
+          </div>
+          <div class="inv-count ${isLow ? 'low' : ''}">${item.stock}</div>
+        `;
+        listEl.appendChild(li);
+      });
+    }
+
+    function openListScanner() {
+      document.getElementById('list-qr-modal').classList.remove('hidden');
+      listQrCode = new Html5Qrcode("list-reader");
+      const config = { fps: 10, qrbox: { width: 200, height: 200 } };
+      const onSuccess = (decodedText) => {
+        closeListScanner();
+        document.getElementById('search-input').value = decodedText;
+        setStockFilter('all');
+        showToast(`QR読み取り: ${decodedText}`);
+      };
+      listQrCode.start({ facingMode: "environment" }, config, onSuccess, () => {})
+        .catch(() => {
+          Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length > 0) listQrCode.start(devices[0].id, config, onSuccess, () => {});
+            else closeListScanner();
+          }).catch(() => closeListScanner());
+        });
+    }
+
+    function closeListScanner() {
+      document.getElementById('list-qr-modal').classList.add('hidden');
+      if (listQrCode && listQrCode.isScanning) {
+        listQrCode.stop().then(() => listQrCode.clear()).catch(() => {});
+      }
+    }
+
+    async function autoFillNextId() {
+      const btn = document.getElementById('auto-id-btn');
+      btn.disabled = true;
+      try {
+        const nextId = await callGasApi('getNextItemId');
+        document.getElementById('new-id').value = nextId;
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function submitNewItem() {
+      if (appSettings.plan === 'trial' && allItemsCache.length >= 10) {
+        if (confirm('フリープランの商品登録上限（10件まで）に達しています。\n全機能プランに切り替えますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
+      const id = document.getElementById('new-id').value.trim();
+      const name = document.getElementById('new-name').value.trim();
+      const stock = document.getElementById('new-stock').value;
+      const min = document.getElementById('new-min').value;
+      const note = document.getElementById('new-note').value.trim();
+
+      if (!id || !name) return alert('商品IDと商品名を入力してください。');
+
+      const btn = document.getElementById('create-item-btn');
+      btn.disabled = true;
+      btn.textContent = '登録中...';
+
+      try {
+        const res = await callGasApi('createNewItem', [id, name, stock, min, note]);
+        document.getElementById('new-id').value = '';
+        document.getElementById('new-name').value = '';
+        document.getElementById('new-stock').value = '0';
+        document.getElementById('new-note').value = '';
+        showToast(`「${res.name}」を登録しました！`);
+
+        document.getElementById('tab-register').classList.remove('active');
+        document.getElementById('tab-scan').classList.add('active');
+        document.getElementById('register-section').classList.add('hidden');
+        fetchItem(res.id);
+      } catch (err) {
+        alert('登録エラー: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '商品を登録してQRコードを発行';
+      }
+    }
+
+    async function loadSettingsAndStaff() {
+      try {
+        const [s, staffList] = await Promise.all([
+          callGasApi('getAppSettings'),
+          callGasApi('getStaffList')
+        ]);
+        appSettings.orgName = s.orgName;
+        appSettings.notifyEmail = s.notifyEmail;
+        appSettings.scanDelay = s.scanDelay;
+        document.getElementById('set-org-name').value = s.orgName;
+        document.getElementById('set-notify-email').value = s.notifyEmail;
+        document.getElementById('set-scan-delay').value = s.scanDelay;
+        renderStaffList(staffList);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function saveSettings() {
+      const org = document.getElementById('set-org-name').value.trim();
+      const email = document.getElementById('set-notify-email').value.trim();
+      const delay = document.getElementById('set-scan-delay').value;
+
+      const btn = document.getElementById('save-settings-btn');
+      btn.disabled = true;
+      try {
+        const s = await callGasApi('saveAppSettings', [org, email, delay, appSettings.plan]);
+        appSettings = s;
+        sessionStorage.setItem('sf_settings', JSON.stringify(s));
+        document.getElementById('header-org-name').textContent = s.orgName;
+        showToast('システム設定を保存しました');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function renderStaffList(list) {
+      const box = document.getElementById('staff-list-container');
+      box.innerHTML = '';
+      list.forEach(st => {
+        box.innerHTML += `
+          <div class="staff-row">
+            <div>
+              <div style="font-weight: 700;">${st.name} <span style="font-size: 0.75rem; color: var(--primary); background: var(--primary-soft); padding: 2px 7px; border-radius: 6px;">${st.role}</span></div>
+              <div style="font-size: 0.78rem; color: var(--text-sub);">ID: ${st.id} ／ パスコード: ${st.passcode}</div>
+            </div>
+            <button type="button" class="btn btn-danger-outline" style="width: auto; padding: 6px 10px; font-size: 0.78rem;" onclick="removeStaff('${st.id}')">削除</button>
+          </div>
+        `;
+      });
+    }
+
+    async function createStaffAccount() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('社員アカウントの追加は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
+      const id = document.getElementById('add-staff-id').value.trim();
+      const name = document.getElementById('add-staff-name').value.trim();
+      const pass = document.getElementById('add-staff-pass').value.trim();
+      const role = document.getElementById('add-staff-role').value;
+
+      const btn = document.getElementById('add-staff-btn');
+      btn.disabled = true;
+      try {
+        const list = await callGasApi('addStaffAccount', [id, name, pass, role]);
+        document.getElementById('add-staff-id').value = '';
+        document.getElementById('add-staff-name').value = '';
+        document.getElementById('add-staff-pass').value = '';
+        renderStaffList(list);
+        showToast('社員アカウントを追加しました');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function removeStaff(id) {
+      if (!confirm(`社員ID「${id}」のアカウントを削除しますか？`)) return;
+      try {
+        const list = await callGasApi('deleteStaffAccount', [id]);
+        renderStaffList(list);
+        showToast('アカウントを削除しました');
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function exportCurrentInventoryExcel() {
+      showToast('在庫データを取得中...');
+      try {
+        const items = await callGasApi('getAllItems');
+        const wb = XLSX.utils.book_new();
+        const wsData = [['商品ID', '商品名', '現在庫数', '発注点', '備考']];
+        items.forEach(i => {
+          wsData.push([i.id, i.name, i.stock, i.minStock, i.note]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, '在庫一覧');
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `StockFlow_在庫データ_${today}.xlsx`);
+        showToast('Excelファイルをダウンロードしました');
+      } catch (err) {
+        alert('出力エラー: ' + err.message);
+      }
+    }
+
+    function downloadSampleExcel() {
+      const wb = XLSX.utils.book_new();
+      const wsData = [
+        ['商品ID', '商品名', '現在庫数', '発注点', '備考'],
+        ['ITEM-001', 'ボルトM6（ステンレス）', 50, 10, '棚A-1'],
+        ['ITEM-002', 'ナットM6（100個入）', 3, 5, '棚A-2']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      XLSX.utils.book_append_sheet(wb, ws, '商品マスタ');
+      XLSX.writeFile(wb, '商品一括登録サンプル.xlsx');
+    }
+
+    function handleExcelFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+        parsedExcelRows = [];
+        const tbody = document.getElementById('excel-preview-tbody');
+        tbody.innerHTML = '';
+
+        for (let i = 1; i < rows.length; i++) {
+          const r = rows[i];
+          if (!r || !r[0]) continue;
+          const item = {
+            id: String(r[0]).trim(),
+            name: String(r[1] || '').trim(),
+            stock: Number(r[2]) || 0,
+            minStock: Number(r[3]) || 0,
+            note: String(r[4] || '').trim()
+          };
+          parsedExcelRows.push(item);
+          tbody.innerHTML += `<tr><td>${item.id}</td><td>${item.name}</td><td>${item.stock}</td><td>${item.minStock}</td><td>${item.note}</td></tr>`;
+        }
+        document.getElementById('excel-preview-count').textContent = `読み取り件数: ${parsedExcelRows.length} 件`;
+        document.getElementById('excel-preview-area').classList.remove('hidden');
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    async function executeBulkImport() {
+      if (appSettings.plan === 'trial') {
+        if (confirm('Excel一括登録は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
+      if (parsedExcelRows.length === 0) return;
+      const btn = document.getElementById('excel-import-btn');
+      btn.disabled = true;
+      try {
+        const res = await callGasApi('bulkImportItems', [parsedExcelRows]);
+        alert(`一括登録完了！\n・新規追加: ${res.added} 件\n・上書き更新: ${res.updated} 件`);
+        document.getElementById('excel-file-input').value = '';
+        document.getElementById('excel-preview-area').classList.add('hidden');
+        refreshDashboardKPI();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function loadSupportHistory() {
+      try {
+        const list = await callGasApi('getSupportMessages');
+        renderSupportHistory(list);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function submitSupportChat() {
+      if (appSettings.plan !== 'custom') {
+        if (confirm('チャット保守窓口は「フルカスタム＆安心保守」プラン限定です。\nプラン選択画面を開きますか？')) {
+          openPlanSelector();
+        }
+        return;
+      }
+
+      const cat = document.getElementById('chat-category').value;
+      const msg = document.getElementById('chat-message').value.trim();
+      if (!msg) return alert('メッセージ内容を入力してください。');
+
+      const btn = document.getElementById('chat-send-btn');
+      btn.disabled = true;
+      try {
+        const list = await callGasApi('sendSupportMessage', [cat, msg]);
+        document.getElementById('chat-message').value = '';
+        renderSupportHistory(list);
+        showToast('送信完了（メール通知しました）');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function renderSupportHistory(list) {
+      const box = document.getElementById('chat-history-box');
+      if (!list || list.length === 0) {
+        box.innerHTML = '<div style="text-align:center; color:var(--text-sub); font-size:0.85rem;">履歴はありません</div>';
+        return;
+      }
+      box.innerHTML = '';
+      list.forEach(item => {
+        const replyHtml = item.reply
+          ? `<div class="admin-reply-box"><strong>💬 管理者からの返信:</strong><br><span style="white-space:pre-wrap;">${item.reply}</span></div>`
+          : '';
+        box.innerHTML += `
+          <div class="chat-msg">
+            <div class="chat-msg-head">
+              <span><span class="chat-cat">${item.category}</span> ${item.sender}</span>
+              <span>${item.date}</span>
+            </div>
+            <div style="white-space: pre-wrap;">${item.message}</div>
+            ${replyHtml}
+          </div>
+        `;
+      });
+    }
+
+    async function selectPlanForQuote(planKey) {
+      document.getElementById('q-plan').value = planKey;
+      appSettings.plan = planKey;
+      sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
+      syncPlanUI();
+      showToast(`「${PLAN_LABELS[planKey]}」を選択しました`);
+
+      try {
+        await callGasApi('updateActivePlan', [planKey]);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function updateQuote() {
+      const clientInput = document.getElementById('q-client').value.trim();
+      document.getElementById('p-client-name').textContent = (clientInput || 'お客様') + ' 御中';
+
+      const planKey = document.getElementById('q-plan').value;
+      syncAllPlanCards(planKey);
+
+      const rows = [];
+      let monthlyFee = 0;
+
+      if (planKey === 'trial') {
+        rows.push({ name: 'フリープラン（QR読み取り・在庫一覧閲覧／商品10件まで）', qty: 1, price: 0 });
+      } else if (planKey === 'standard') {
+        rows.push({ name: '現場導入セットアップ（全機能フル開放・専用環境構築・初期設定一式）', qty: 1, price: 30000 });
+      } else if (planKey === 'custom') {
+        rows.push({ name: 'フルカスタム＆安心保守（全機能フル利用・独自項目カスタム・チャット保守）', qty: 1, price: 50000 });
+        monthlyFee = 5000;
+      }
+
+      if (document.getElementById('opt-data').checked) {
+        rows.push({ name: '【オプション】既存エクセルデータ初期登録代行', qty: 1, price: 10000 });
+      }
+      if (document.getElementById('opt-qr').checked) {
+        rows.push({ name: '【オプション】印刷用QRラベルPDF一括作成', qty: 1, price: 5000 });
+      }
+
+      let subtotal = 0;
+      const tbody = document.getElementById('p-tbody');
+      tbody.innerHTML = '';
+      rows.forEach(r => {
+        const lineTotal = r.qty * r.price;
+        subtotal += lineTotal;
+        tbody.innerHTML += `<tr><td>${r.name}</td><td class="num">${r.qty}</td><td class="num">${r.price.toLocaleString()}円</td><td class="num">${lineTotal.toLocaleString()}円</td></tr>`;
+      });
+
+      const tax = Math.floor(subtotal * 0.1);
+      const total = subtotal + tax;
+      tbody.innerHTML += `
+        <tr style="background:#f8fafc;"><td colspan="3" class="num">小計（税抜）</td><td class="num">${subtotal.toLocaleString()}円</td></tr>
+        <tr style="background:#f8fafc;"><td colspan="3" class="num">消費税（10%）</td><td class="num">${tax.toLocaleString()}円</td></tr>
+      `;
+      document.getElementById('p-total-tax').textContent = `${total.toLocaleString()} 円`;
+      document.getElementById('p-note').innerHTML = monthlyFee > 0
+        ? `※初期費用とは別に、月額サポート費用として <strong>${monthlyFee.toLocaleString()}円（税抜）/月</strong> が発生します。`
+        : `※Googleスプレッドシートを利用するため、<strong>サーバー維持費・月額固定費は0円</strong>です。`;
+    }
+
+    function onError(err) {
+      document.getElementById('loading-box').classList.add('hidden');
+      alert('エラー: ' + err.message);
+      resetToScan();
+    }
+  </script>
+</body>
+</html>
