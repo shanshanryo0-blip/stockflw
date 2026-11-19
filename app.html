@@ -7,28 +7,30 @@
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --primary-soft: #eff6ff;
-      --primary-border: #bfdbfe;
-      --accent: #0ea5e9;
-      --bg: #f8fafc;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-soft: #e0f2fe;
+      --primary-border: #bae6fd;
+      --orange: #f59e0b;
+      --orange-dark: #d97706;
+      --navy-bar: #1e293b;
+      --bg: #f1f5f9;
       --surface: #ffffff;
       --text-main: #0f172a;
       --text-sub: #64748b;
       --border: #e2e8f0;
-      --in-color: #10b981;
-      --in-soft: #ecfdf5;
-      --out-color: #ef4444;
-      --out-soft: #fef2f2;
-      --warn-color: #f59e0b;
-      --warn-soft: #fffbeb;
-      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.09);
+      --in-color: #16a34a;
+      --in-soft: #dcfce7;
+      --out-color: #dc2626;
+      --out-soft: #fee2e2;
+      --warn-color: #d97706;
+      --warn-soft: #fef3c7;
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.12);
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,10 +41,11 @@
       padding: 0 0 96px 0;
       background-color: var(--bg);
       color: var(--text-main);
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.55;
     }
 
+    /* ログイン画面 */
     .lock-screen {
       position: fixed;
       inset: 0;
@@ -65,16 +68,16 @@
     .lock-icon {
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, #38bdf8 100%);
       color: #fff;
       border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 18px auto;
-      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
     }
 
+    /* プラン選択モーダル */
     .plan-welcome-screen {
       position: fixed;
       inset: 0;
@@ -94,58 +97,53 @@
       width: 100%;
       max-width: 880px;
       margin: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
+    /* 1枚目画像風：2段業務ヘッダー */
     .app-header {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
+      background: #ffffff;
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      z-index: 20;
-      padding: 10px 14px;
+      z-index: 30;
     }
-    .header-inner {
-      max-width: 1040px;
+    .header-top {
+      max-width: 1180px;
       margin: 0 auto;
+      padding: 9px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 8px;
     }
     .brand {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-weight: 800;
-      font-size: 1.02rem;
-      letter-spacing: -0.02em;
+      font-weight: 900;
+      font-size: 1.08rem;
+      color: #0f172a;
     }
     .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
       color: #fff;
-      border-radius: 9px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
     .plan-pill-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 5px 9px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid var(--border);
+      border: 1px solid #fcd34d;
       background: var(--warn-soft);
       color: #b45309;
       cursor: pointer;
-      white-space: nowrap;
     }
     .plan-pill-btn.pro {
       background: var(--primary-soft);
@@ -153,36 +151,85 @@
       border-color: var(--primary-border);
     }
     .user-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--bg);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 5px 8px;
+      color: var(--text-main);
+      background: var(--bg);
+      padding: 4px 10px;
       border-radius: 999px;
-      white-space: nowrap;
+      border: 1px solid var(--border);
     }
     .header-lock-btn {
-      background: var(--surface);
+      background: #fff;
       border: 1px solid var(--border);
       color: var(--text-sub);
       font-size: 0.74rem;
       font-weight: 700;
-      padding: 5px 8px;
-      border-radius: 9px;
+      padding: 4px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      white-space: nowrap;
     }
 
+    /* PC用ダークネイビー業務バー（1枚目画像再現） */
+    .pc-sub-bar {
+      display: none;
+      background: var(--navy-bar);
+      color: #e2e8f0;
+      padding: 0 16px;
+    }
+    @media (min-width: 760px) {
+      .pc-sub-bar { display: block; }
+    }
+    .pc-sub-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 40px;
+    }
+    .pc-nav-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0 14px;
+      height: 100%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 3px solid transparent;
+    }
+    .pc-nav-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .pc-nav-btn.active {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      border-bottom-color: #38bdf8;
+    }
+    .pc-nav-cta {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 14px; }
+    .narrow-container { max-width: 600px; margin: 0 auto; }
+    .wide-container { max-width: 1180px; margin: 0 auto; }
+
     .free-limit-bar {
-      background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
+      background: #fffbeb;
       border: 1px solid #fcd34d;
-      border-radius: 14px;
-      padding: 11px 14px;
-      margin-bottom: 14px;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -195,28 +242,23 @@
       color: #fff;
       border: none;
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 5px 10px;
       font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
-      white-space: nowrap;
     }
-
-    .container { max-width: 1040px; margin: 0 auto; padding: 16px; }
-    .narrow-container { max-width: 580px; margin: 0 auto; }
-    .wide-container { max-width: 1040px; margin: 0 auto; }
 
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 13px 12px;
+      border-radius: 14px;
+      padding: 12px;
       box-shadow: var(--shadow-xs);
     }
     .kpi-card.alert {
@@ -224,28 +266,310 @@
       border-color: #fde68a;
       cursor: pointer;
     }
-    .kpi-label { font-size: 0.72rem; font-weight: 700; color: var(--text-sub); margin-bottom: 3px; }
-    .kpi-val { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
+    .kpi-label { font-size: 0.72rem; font-weight: 700; color: var(--text-sub); }
+    .kpi-val { font-size: 1.35rem; font-weight: 900; color: var(--text-main); }
     .kpi-card.alert .kpi-val { color: #d97706; }
 
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
+      border-radius: 16px;
+      padding: 18px;
       box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .card-title {
-      font-size: 1.02rem;
-      font-weight: 700;
-      margin: 0 0 14px 0;
+      font-size: 1rem;
+      font-weight: 800;
+      margin: 0 0 12px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
 
+    /* 1枚目・2枚目再現：在庫一覧ヘッダー＆ツールバー */
+    .list-top-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .list-page-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toolbar-btns {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-orange {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    }
+    .btn-tool-mini {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-main);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-tool-mini:hover { background: #f8fafc; }
+
+    /* 2枚目画像風：検索＆カテゴリフィルター行 */
+    .stocker-filter-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .stocker-sub-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip-btn {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text-sub);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .chip-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+    .chip-btn.warn.active {
+      background: #dc2626;
+      color: #fff;
+      border-color: #dc2626;
+    }
+
+    /* 1枚目（PCテーブル）＆ 2枚目（スマホカード）両対応リスト */
+    .zaico-table-head {
+      display: none;
+    }
+    @media (min-width: 820px) {
+      .zaico-table-head {
+        display: grid;
+        grid-template-columns: 44px 2.3fr 1.1fr 1fr 0.9fr 1.4fr;
+        align-items: center;
+        background: #f8fafc;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 9px 10px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--text-sub);
+      }
+    }
+
+    .inv-list { list-style: none; padding: 0; margin: 0; }
+    .inv-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      transition: background 0.12s;
+    }
+    .inv-item-row:hover { background: #f8fafc; }
+    .inv-item-row:last-child { border-bottom: none; }
+
+    @media (min-width: 820px) {
+      .inv-item-row {
+        display: grid;
+        grid-template-columns: 44px 2.3fr 1.1fr 1fr 0.9fr 1.4fr;
+        align-items: center;
+        padding: 12px 10px;
+      }
+    }
+
+    /* 商品サムネイルアイコン（1枚目画像左端の四角枠再現） */
+    .item-thumb-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .inv-info-col {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .cat-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 5px;
+      margin-bottom: 3px;
+    }
+    .inv-name-txt {
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+    /* 2枚目画像再現：色付きピルバッジ（在庫なし・在庫少・在庫あり） */
+    .stocker-status-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .st-pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 999px;
+      color: #fff;
+    }
+    .st-out { background: #ef4444; }
+    .st-low { background: #f59e0b; }
+    .st-ok  { background: #22c55e; }
+
+    /* 1枚目画像再現：▲差分ピル＋在庫数表示 */
+    .stock-col-box {
+      text-align: right;
+      cursor: pointer;
+    }
+    .diff-badge {
+      display: inline-block;
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #334155;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .diff-badge.danger {
+      background: #dc2626;
+    }
+    .stock-big-num {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+    .stock-big-num.danger { color: #dc2626; }
+    .stock-unit-small {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    /* 2枚目画像再現：「− 消費」「＋ 購入」丸型ボタン */
+    .stocker-btn-pair {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .stk-btn {
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s;
+    }
+    .stk-btn:active { transform: scale(0.93); }
+    .stk-btn.consume:hover { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+    .stk-btn.purchase {
+      background: #fffbeb;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+    .stk-btn.purchase:hover { background: #fef3c7; }
+
+    .pc-col-cell { display: none; }
+    @media (min-width: 820px) {
+      .pc-col-cell {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--text-sub);
+        font-weight: 600;
+      }
+    }
+
+    /* 2枚目画像再現：右下のオレンジ色「＋ アイテムを追加」フローティングボタン */
+    .fab-add-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 76px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 13px 20px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.45);
+      cursor: pointer;
+      z-index: 25;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fab-add-btn:active { transform: scale(0.96); }
+
+    /* 共通パーツ */
     .mode-switch {
       display: flex;
       background: var(--bg);
@@ -265,18 +589,9 @@
       color: var(--text-sub);
       cursor: pointer;
     }
-    .mode-btn.active {
-      background: #fff;
-      color: var(--primary);
-      box-shadow: var(--shadow-xs);
-    }
+    .mode-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-xs); }
 
-    .scanner-frame {
-      background: #0f172a;
-      border-radius: 14px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
+    .scanner-frame { background: #0f172a; border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
     #reader { width: 100%; }
 
     .cont-log-box {
@@ -289,13 +604,7 @@
       max-height: 150px;
       overflow-y: auto;
     }
-    .cont-log-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #334155;
-    }
-    .cont-log-row:last-child { border-bottom: none; }
+    .cont-log-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #334155; }
 
     .btn {
       display: inline-flex;
@@ -303,20 +612,17 @@
       justify-content: center;
       gap: 8px;
       width: 100%;
-      padding: 14px 16px;
-      font-size: 0.96rem;
+      padding: 13px 16px;
+      font-size: 0.94rem;
       font-weight: 700;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.15s ease;
       text-decoration: none;
     }
-    .btn:active { transform: scale(0.98); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
-    .btn-in { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; }
+    .btn-primary { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; }
+    .btn-in { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
     .btn-out { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; }
     .btn-count { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: #fff; }
     .btn-sheet { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
@@ -326,99 +632,71 @@
     .input-group { display: flex; gap: 8px; }
     input[type="text"], input[type="number"], input[type="password"], input[type="email"], select, textarea {
       width: 100%;
-      padding: 12px 14px;
-      font-size: 0.96rem;
+      padding: 11px 13px;
+      font-size: 0.94rem;
       font-family: inherit;
       color: var(--text-main);
       background: var(--bg);
       border: 1.5px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       outline: none;
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
-      background: #fff;
-    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
 
     .stepper { display: flex; align-items: center; gap: 10px; }
     .step-btn {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 12px;
       border: 1.5px solid var(--border);
       background: var(--bg);
       font-size: 1.4rem;
       font-weight: 700;
       cursor: pointer;
-      flex-shrink: 0;
     }
-    .stepper input { text-align: center; font-size: 1.35rem; font-weight: 800; height: 50px; }
+    .stepper input { text-align: center; font-size: 1.35rem; font-weight: 800; height: 48px; }
 
     .undo-banner {
       background: #0f172a;
       color: #fff;
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
     .undo-btn {
       background: #f59e0b;
       color: #0f172a;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 800;
-      padding: 8px 14px;
-      border-radius: 10px;
+      padding: 6px 12px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
-      white-space: nowrap;
     }
-
-    .cat-badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #cbd5e1;
-      margin-right: 4px;
-    }
-    .item-badge {
-      display: inline-block;
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 7px;
-      background: var(--primary-soft);
-      color: var(--primary);
-    }
-    .item-name { font-size: 1.4rem; font-weight: 800; margin: 6px 0 4px 0; }
-    .item-note { font-size: 0.88rem; color: var(--text-sub); }
 
     .stock-panel {
-      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
       border: 1.5px solid var(--primary-border);
-      border-radius: 16px;
-      padding: 18px;
-      margin: 16px 0;
+      border-radius: 14px;
+      padding: 16px;
+      margin: 14px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .stock-panel.low { background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%); border-color: #fecaca; }
-    .stock-label { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+    .stock-label { font-size: 0.92rem; font-weight: 800; color: var(--primary); }
     .stock-panel.low .stock-label { color: var(--out-color); }
-    .stock-value { font-size: 2.3rem; font-weight: 800; color: var(--primary); }
+    .stock-value { font-size: 2.1rem; font-weight: 900; color: var(--primary); }
     .stock-panel.low .stock-value { color: var(--out-color); }
 
-    .form-field { margin-bottom: 15px; }
-    .form-label { display: block; font-size: 0.84rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .form-field { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-sub); margin-bottom: 5px; }
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 
     .qr-display-box {
       display: flex;
@@ -430,146 +708,24 @@
       padding: 16px;
       margin-bottom: 12px;
     }
-    #item-qrcode { background: #fff; padding: 12px; border-radius: 12px; box-shadow: var(--shadow-sm); }
-    #item-qrcode img { display: block; }
-    .qr-caption { margin-top: 10px; font-size: 0.86rem; font-weight: 700; }
+    #item-qrcode { background: #fff; padding: 12px; border-radius: 12px; }
+    .qr-caption { margin-top: 10px; font-size: 0.84rem; font-weight: 700; }
 
     .log-list { list-style: none; padding: 0; margin: 0; }
     .log-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0;
+      padding: 11px 0;
       border-bottom: 1px solid var(--border);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       gap: 10px;
     }
     .log-item:last-child { border-bottom: none; }
-    .pill { padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.78rem; white-space: nowrap; }
+    .pill { padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 0.76rem; }
     .pill-in { background: var(--in-soft); color: var(--in-color); }
     .pill-out { background: var(--out-soft); color: var(--out-color); }
     .pill-other { background: var(--primary-soft); color: var(--primary); }
-
-    /* 在庫一覧（zaico × Stocker風） */
-    .filter-bar-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .filter-pill {
-      flex: 1;
-      min-width: 110px;
-      padding: 9px 10px;
-      border-radius: 10px;
-      border: 1.5px solid var(--border);
-      background: var(--bg);
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-sub);
-      cursor: pointer;
-      text-align: center;
-    }
-    .filter-pill.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
-    .filter-pill.warn.active { background: var(--out-soft); border-color: var(--out-color); color: var(--out-color); }
-
-    .search-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
-    .icon-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .icon-btn.qr-btn { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); }
-
-    .status-pill {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 2px 9px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-    .status-ok { background: #dcfce7; color: #15803d; }
-    .status-low { background: #fef3c7; color: #b45309; }
-    .status-out { background: #fee2e2; color: #b91c1c; }
-
-    .inv-list { list-style: none; padding: 0; margin: 0; }
-    .inv-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 10px;
-      border-bottom: 1px solid var(--border);
-      gap: 10px;
-      transition: background 0.15s;
-    }
-    .inv-row:hover { background: #f8fafc; }
-    .inv-row:last-child { border-bottom: none; }
-
-    .inv-main-click { flex: 1; min-width: 0; cursor: pointer; }
-    .inv-title-line { font-weight: 800; font-size: 0.98rem; color: var(--text-main); margin: 3px 0; }
-    .inv-meta-line { font-size: 0.78rem; color: var(--text-sub); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-
-    .quick-action-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .stock-num-box {
-      text-align: right;
-      margin-right: 4px;
-      cursor: pointer;
-      min-width: 64px;
-    }
-    .stock-num-val { font-size: 1.25rem; font-weight: 900; color: var(--text-main); line-height: 1.1; }
-    .stock-num-val.low { color: #d97706; }
-    .stock-num-val.out { color: #dc2626; }
-    .stock-unit-txt { font-size: 0.74rem; font-weight: 700; color: var(--text-sub); }
-
-    .q-btn {
-      border: 1.5px solid var(--border);
-      background: #fff;
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.12s;
-    }
-    .q-btn:active { transform: scale(0.94); }
-    .q-btn.minus { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
-    .q-btn.plus { color: #10b981; border-color: #a7f3d0; background: #ecfdf5; }
-
-    /* PC画面幅のときはzaico風の列見出しを表示 */
-    .pc-table-head {
-      display: none;
-    }
-    @media (min-width: 760px) {
-      .pc-table-head {
-        display: grid;
-        grid-template-columns: 2.2fr 1.1fr 0.9fr 1.1fr 1.3fr;
-        padding: 10px 12px;
-        background: #f1f5f9;
-        border-radius: 10px;
-        font-size: 0.76rem;
-        font-weight: 800;
-        color: var(--text-sub);
-        margin-bottom: 4px;
-      }
-      .inv-row {
-        display: grid;
-        grid-template-columns: 2.2fr 1.1fr 0.9fr 1.1fr 1.3fr;
-        padding: 12px;
-      }
-      .pc-only-col { display: block; font-size: 0.84rem; color: var(--text-sub); }
-    }
-    @media (max-width: 759px) {
-      .pc-only-col { display: none; }
-    }
 
     .sub-tabs {
       display: grid;
@@ -577,124 +733,72 @@
       background: #e2e8f0;
       padding: 4px;
       border-radius: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       gap: 3px;
     }
     .sub-tab {
-      padding: 9px 2px;
+      padding: 8px 2px;
       border: none;
       background: transparent;
       border-radius: 9px;
-      font-size: 0.71rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--text-sub);
       cursor: pointer;
-      white-space: nowrap;
     }
-    .sub-tab.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-xs); }
+    .sub-tab.active { background: #fff; color: var(--primary); }
 
-    .portal-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .portal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     .portal-link-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
       background: var(--bg);
       border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px;
       text-decoration: none;
       color: var(--text-main);
-      transition: all 0.15s ease;
     }
-    .portal-link-card:hover {
-      border-color: var(--primary);
-      background: var(--primary-soft);
-    }
-
     .staff-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px;
+      padding: 10px;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       margin-bottom: 8px;
       background: var(--bg);
     }
 
     .preview-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; max-height: 220px; }
-    .simple-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-    .simple-table th { background: var(--bg); padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
-    .simple-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .simple-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .simple-table th, .simple-table td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
 
-    .chat-box {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 340px;
-      overflow-y: auto;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      margin-top: 14px;
-    }
-    .chat-msg { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 0.88rem; }
-    .chat-msg-head { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-sub); margin-bottom: 6px; font-weight: 700; }
-    .chat-cat { background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px; }
-    .admin-reply-box { margin-top: 10px; padding: 10px 12px; background: var(--in-soft); border-left: 4px solid var(--in-color); border-radius: 6px; font-size: 0.86rem; color: #065f46; }
+    .chat-box { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding: 10px; background: var(--bg); border-radius: 12px; margin-top: 12px; }
+    .chat-msg { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 0.86rem; }
+    .chat-msg-head { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-sub); margin-bottom: 4px; font-weight: 700; }
+    .chat-cat { background: var(--primary-soft); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .admin-reply-box { margin-top: 8px; padding: 8px 10px; background: var(--in-soft); border-left: 4px solid var(--in-color); border-radius: 6px; font-size: 0.84rem; color: #065f46; }
 
     .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 16px; }
     @media (min-width: 720px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
     .plan-card {
-      position: relative;
       background: var(--surface);
       border: 2px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
+      border-radius: 16px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease;
     }
-    .plan-card.selected-plan {
-      border: 3px solid var(--primary);
-      background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 35%, #ffffff 100%);
-      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
-      transform: translateY(-2px);
-    }
-    .current-plan-ribbon {
-      display: none;
-      background: var(--primary);
-      color: #fff;
-      font-size: 0.74rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-    .plan-card.selected-plan .current-plan-ribbon {
-      display: block;
-    }
-    .plan-features {
-      font-size: 0.82rem;
-      color: var(--text-main);
-      padding-left: 18px;
-      margin: 0 0 16px 0;
-      line-height: 1.6;
-    }
+    .plan-card.selected-plan { border: 3px solid var(--primary); background: #f0f9ff; }
+    .current-plan-ribbon { display: none; background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px; text-align: center; }
+    .plan-card.selected-plan .current-plan-ribbon { display: block; }
+    .plan-features { font-size: 0.8rem; padding-left: 18px; margin: 0 0 14px 0; }
     .plan-features li.disabled-feat { color: var(--text-sub); text-decoration: line-through; }
 
-    .quote-sheet { background: #fff; border: 1px solid #94a3b8; border-radius: 12px; padding: 20px; margin-top: 16px; }
-    .quote-header { text-align: center; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.2em; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px; }
-    .quote-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 12px 0; }
-    .quote-table th, .quote-table td { border: 1px solid #cbd5e1; padding: 8px; }
+    .quote-sheet { background: #fff; border: 1px solid #94a3b8; border-radius: 12px; padding: 20px; margin-top: 14px; }
+    .quote-header { text-align: center; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.2em; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 14px; }
+    .quote-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 12px 0; }
+    .quote-table th, .quote-table td { border: 1px solid #cbd5e1; padding: 7px; }
     .quote-table th { background: #f1f5f9; text-align: left; }
     .quote-table td.num, .quote-table th.num { text-align: right; }
 
@@ -703,7 +807,7 @@
       inset: 0;
       background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(4px);
-      z-index: 50;
+      z-index: 60;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -712,6 +816,7 @@
     .modal-card { background: var(--surface); border-radius: 18px; padding: 20px; width: 100%; max-width: 440px; }
     #list-reader { width: 100%; border-radius: 12px; overflow: hidden; background: #0f172a; margin: 12px 0; }
 
+    /* 下部ボトムナビ（2枚目画像風オレンジアクセント） */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -729,7 +834,7 @@
     .nav-item {
       border: none;
       background: transparent;
-      padding: 9px 2px;
+      padding: 8px 2px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -739,30 +844,30 @@
       color: var(--text-sub);
       cursor: pointer;
     }
-    .nav-item.active { color: var(--primary); }
+    .nav-item.active { color: #d97706; }
 
     .loader-box { text-align: center; padding: 40px 20px; color: var(--text-sub); }
     .spinner {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border: 3px solid var(--border);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      margin: 0 auto 12px auto;
+      margin: 0 auto 10px auto;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .toast {
       position: fixed;
-      top: 66px;
+      top: 62px;
       left: 50%;
       transform: translateX(-50%);
       background: #0f172a;
       color: #fff;
-      padding: 10px 20px;
+      padding: 9px 18px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 700;
       box-shadow: var(--shadow-md);
       z-index: 100;
@@ -773,7 +878,7 @@
 
     @media print {
       body { background: #fff; padding: 0; }
-      .app-header, .bottom-nav, .no-print, .lock-screen, .plan-welcome-screen { display: none !important; }
+      .app-header, .bottom-nav, .no-print, .lock-screen, .plan-welcome-screen, .fab-add-btn { display: none !important; }
       .container { max-width: 100%; padding: 0; }
       .quote-sheet { border: none; padding: 0; margin: 0; }
     }
@@ -788,11 +893,9 @@
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </div>
       <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">StockFlow ログイン</h2>
-      <p style="margin: 0 0 20px 0; font-size: 0.84rem; color: var(--text-sub);">
-        会社コードと社員パスコードを入力してください
-      </p>
+      <p style="margin: 0 0 20px 0; font-size: 0.84rem; color: var(--text-sub);">会社コードと社員パスコードを入力してください</p>
       <div class="form-field">
-        <input type="text" id="login-corp" placeholder="会社コード（例: demo-0001）" autocomplete="organization">
+        <input type="text" id="login-corp" placeholder="会社コード（例: demo-0001）">
       </div>
       <div class="form-field">
         <input type="password" id="login-pass" placeholder="社員パスコード（例: 1234）" inputmode="numeric" onkeydown="if(event.key==='Enter') unlockApp()">
@@ -807,55 +910,43 @@
     <div class="plan-welcome-wrap">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <span style="background:var(--primary-soft); color:var(--primary); font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px;">StockFlow プラン設定</span>
-        <button onclick="closePlanSelector()" style="border:none; background:none; font-size:1.3rem; cursor:pointer; color:var(--text-sub);">✕</button>
+        <button onclick="closePlanSelector()" style="border:none; background:none; font-size:1.3rem; cursor:pointer;">✕</button>
       </div>
-      <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin: 0 0 6px 0; font-size: 1.35rem; font-weight: 800;">ご利用プランを選択してください</h2>
-        <p style="margin: 0; font-size: 0.86rem; color: var(--text-sub);">最初は「フリープラン」から無料でお試しいただけます（後からいつでも切替可能）</p>
-      </div>
-
       <div class="grid-3">
         <div class="plan-card selected-plan" id="welcome-card-trial">
           <div>
             <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フリープラン</h3>
-            <div style="font-size:1.3rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
+            <h3 style="margin:0 0 6px 0;">フリープラン</h3>
+            <div style="font-size:1.25rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 / 月額 0円</div>
             <ul class="plan-features">
               <li><strong>QR読み取り＆在庫一覧の閲覧</strong></li>
               <li>商品登録 <strong>10件まで</strong></li>
-              <li class="disabled-feat">連続スキャン（1個即処理）</li>
-              <li class="disabled-feat">社員追加・Excel一括・チャット保守</li>
+              <li class="disabled-feat">連続スキャン・社員追加・Excel一括</li>
             </ul>
           </div>
-          <button id="welcome-btn-trial" class="btn btn-primary" onclick="chooseInitialPlan('trial')">✓ フリープランで開始（選択中）</button>
+          <button id="welcome-btn-trial" class="btn btn-primary" onclick="chooseInitialPlan('trial')">✓ フリープランで開始</button>
         </div>
-
         <div class="plan-card" id="welcome-card-standard">
           <div>
             <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-            <div style="display:inline-block; background:var(--warn-soft); color:#b45309; border:1px solid #fcd34d; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
-            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">現場導入セットアップ</h3>
-            <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 <span style="font-size:0.85rem;">/ 月額 0円</span></div>
+            <h3 style="margin:0 0 6px 0;">現場導入セットアップ</h3>
+            <div style="font-size:1.25rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 / 月額 0円</div>
             <ul class="plan-features">
               <li><strong>全機能フル開放（商品数無制限）</strong></li>
               <li><strong>連続スキャン＆要発注リストコピー</strong></li>
               <li><strong>社員アカウント管理＆Excel一括登録</strong></li>
-              <li>専用環境構築＆初期設定サポート</li>
             </ul>
           </div>
           <button id="welcome-btn-standard" class="btn btn-outline" onclick="chooseInitialPlan('standard')">このプランに切り替える</button>
         </div>
-
         <div class="plan-card" id="welcome-card-custom">
           <div>
             <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-            <h3 style="margin:0 0 6px 0; font-size:1.1rem;">フルカスタム＆安心保守</h3>
-            <div style="font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 <span style="font-size:0.85rem;">/ 月 5,000円</span></div>
+            <h3 style="margin:0 0 6px 0;">フルカスタム＆安心保守</h3>
+            <div style="font-size:1.25rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 / 月 5,000円</div>
             <ul class="plan-features">
-              <li><strong>全機能フル利用</strong>＋専用環境構築</li>
-              <li><strong>独自項目の追加・画面カスタム対応</strong></li>
+              <li><strong>全機能フル利用</strong>＋独自項目カスタム</li>
               <li><strong>アプリ内チャット保守窓口</strong></li>
-              <li>不具合対応・操作サポート無制限</li>
             </ul>
           </div>
           <button id="welcome-btn-custom" class="btn btn-outline" onclick="chooseInitialPlan('custom')">このプランに切り替える</button>
@@ -864,12 +955,12 @@
     </div>
   </div>
 
-  <!-- ヘッダー -->
+  <!-- 1枚目画像再現：2段ヘッダー＆業務バー -->
   <header class="app-header">
-    <div class="header-inner">
+    <div class="header-top">
       <div class="brand">
         <div class="brand-icon">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
         </div>
         <span id="header-org-name">StockFlow</span>
       </div>
@@ -877,6 +968,17 @@
         <button class="plan-pill-btn" id="header-plan-badge" onclick="openPlanSelector()">フリープラン ▾</button>
         <span class="user-chip" id="header-user-badge">👤 未ログイン</span>
         <button class="header-lock-btn" onclick="lockApp()">ログアウト</button>
+      </div>
+    </div>
+
+    <!-- PC表示時のダークネイビー業務バー -->
+    <div class="pc-sub-bar">
+      <div class="pc-sub-inner">
+        <button class="pc-nav-cta" onclick="switchTab('register')">＋ 新規在庫データ追加</button>
+        <button id="pc-tab-list" class="pc-nav-btn active" onclick="switchTab('list')">📋 在庫一覧</button>
+        <button id="pc-tab-scan" class="pc-nav-btn" onclick="switchTab('scan')">📷 QR入庫/出庫</button>
+        <button id="pc-tab-history" class="pc-nav-btn" onclick="switchTab('history')">🕒 入出庫履歴</button>
+        <button id="pc-tab-tools" class="pc-nav-btn" onclick="switchTab('tools')">⚙️ データ管理・設定</button>
       </div>
     </div>
   </header>
@@ -891,15 +993,73 @@
       </div>
     </div>
 
-    <!-- 【タブ1】スキャン・連続スキャン -->
-    <section id="scan-section" class="narrow-container">
+    <!-- 【メイン画面】在庫一覧（1枚目zaico × 2枚目Stocker 融合UI） -->
+    <section id="list-section" class="wide-container">
       <div id="free-plan-banner" class="free-limit-bar">
-        <div>
-          <strong>現在フリープラン利用中</strong>（商品10件まで・一部機能制限）
-        </div>
+        <div><strong>現在フリープラン利用中</strong>（商品10件まで・一部機能制限）</div>
         <button class="upgrade-mini-btn" onclick="openPlanSelector()">プラン変更</button>
       </div>
 
+      <div id="list-undo-banner" class="undo-banner hidden">
+        <div style="font-size: 0.82rem; font-weight: 600;" id="list-undo-text"></div>
+        <button class="undo-btn" onclick="executeUndo()">↩ 1つ前に戻す</button>
+      </div>
+
+      <div class="card" style="padding: 16px;">
+        <!-- 1枚目画像再現：上段タイトル＆アクションボタン群 -->
+        <div class="list-top-header">
+          <div class="list-page-title">
+            <span>在庫一覧</span>
+            <span id="list-summary-text" style="font-size:0.82rem; color:var(--text-sub); font-weight:700;"></span>
+          </div>
+          <div class="toolbar-btns">
+            <button type="button" class="btn-orange" onclick="switchTab('register')">＋ 新規登録</button>
+            <button type="button" class="btn-tool-mini" onclick="switchTab('tools'); switchSubTab('excel');">📥 インポート</button>
+            <button type="button" class="btn-tool-mini" onclick="exportCurrentInventoryExcel()">📤 エクスポート</button>
+          </div>
+        </div>
+
+        <!-- 2枚目画像再現：検索ボックス＆カテゴリフィルター -->
+        <div class="stocker-filter-bar">
+          <input type="text" id="search-input" placeholder="🔍 名称・ID・保管場所で検索..." oninput="filterList()">
+          <div style="display:flex; gap:6px;">
+            <select id="category-filter" onchange="filterList()" style="width: auto; min-width: 125px; font-size: 0.82rem; font-weight: 700;">
+              <option value="all">カテゴリ：すべて</option>
+            </select>
+            <button class="btn-tool-mini" style="background:#e0f2fe; border-color:#bae6fd; color:#0284c7;" onclick="openListScanner()">📷 QR検索</button>
+          </div>
+        </div>
+
+        <!-- ステータス絞り込みチップ -->
+        <div class="stocker-sub-filters">
+          <div class="filter-chips">
+            <button id="pill-all" class="chip-btn active" onclick="setStockFilter('all')">すべて表示</button>
+            <button id="pill-low" class="chip-btn warn" onclick="setStockFilter('low')">⚠️ 在庫少・在庫なし (<span id="low-count-badge">0</span>)</button>
+          </div>
+          <button id="order-copy-bar" class="btn-tool-mini hidden" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;" onclick="copyLowStockOrderList()">
+            📋 要発注リストをコピー <span id="copy-lock-icon">🔒</span>
+          </button>
+        </div>
+
+        <!-- 1枚目画像再現：PC表示時のテーブル列ヘッダー -->
+        <div class="zaico-table-head">
+          <div>アイコン</div>
+          <div>カテゴリ / 商品名 / ステータス</div>
+          <div>保管場所</div>
+          <div>在庫ID</div>
+          <div style="text-align:right; padding-right:10px;">現在庫数 / 発注点</div>
+          <div style="text-align:right;">クイック入出庫</div>
+        </div>
+
+        <ul class="inv-list" id="inventory-list"></ul>
+      </div>
+    </section>
+
+    <!-- 2枚目画像再現：右下のオレンジ色「＋ アイテムを追加」ボタン -->
+    <button id="fab-add-btn" class="fab-add-btn" onclick="switchTab('register')">＋ アイテムを追加</button>
+
+    <!-- 【タブ2】QRスキャン・連続スキャン -->
+    <section id="scan-section" class="narrow-container hidden">
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">登録商品数</div>
@@ -922,13 +1082,12 @@
 
       <div class="card">
         <h2 class="card-title"><span>📷 QRコードスキャン</span></h2>
-
         <div class="mode-switch">
           <button type="button" id="scan-mode-single" class="mode-btn active" onclick="setScanMode('single')">通常スキャン（詳細確認）</button>
           <button type="button" id="scan-mode-cont" class="mode-btn" onclick="setScanMode('cont')">⚡ 連続スキャン <span id="cont-lock-icon">🔒</span></button>
         </div>
 
-        <div id="cont-options" class="hidden" style="margin-bottom: 12px; background: var(--primary-soft); padding: 12px; border-radius: 12px; border: 1px solid var(--primary-border);">
+        <div id="cont-options" class="hidden" style="margin-bottom: 12px; background: var(--primary-soft); padding: 12px; border-radius: 12px;">
           <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">読み取り時の自動アクション（数量: 1）</div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
             <button type="button" id="cont-type-in" class="btn btn-in" style="padding: 10px;" onclick="setContAction('入庫')">＋ 連続入庫 (+1)</button>
@@ -936,15 +1095,13 @@
           </div>
         </div>
 
-        <div class="scanner-frame">
-          <div id="reader"></div>
-        </div>
+        <div class="scanner-frame"><div id="reader"></div></div>
 
         <button id="start-scan-btn" class="btn btn-primary" onclick="startScanner()">カメラを起動してスキャン</button>
         <button id="stop-scan-btn" class="btn btn-outline hidden" onclick="stopScanner()">スキャンを停止する</button>
 
         <div id="cont-log-box" class="cont-log-box hidden">
-          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 4px;">連続読み取り履歴（最新順）</div>
+          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 4px;">連続読み取り履歴</div>
           <div id="cont-log-list"></div>
         </div>
       </div>
@@ -958,7 +1115,7 @@
       </div>
     </section>
 
-    <!-- 【タブ1派生】商品詳細・編集・削除・入出庫・QR生成 -->
+    <!-- 商品詳細・編集・削除・入出庫・QR生成 -->
     <section id="detail-section" class="narrow-container hidden">
       <div id="detail-undo-banner" class="undo-banner hidden">
         <div style="font-size: 0.84rem; font-weight: 600;" id="detail-undo-text"></div>
@@ -968,13 +1125,13 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
           <div>
-            <span class="cat-badge" id="disp-cat">未分類</span>
-            <span class="item-badge" id="disp-id">ID: -</span>
+            <span class="cat-tag" id="disp-cat">未分類</span>
+            <span style="font-size:0.76rem; font-weight:700; color:var(--primary);" id="disp-id">ID: -</span>
           </div>
           <button type="button" class="btn btn-outline" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="openEditModal()">✏️ 編集・削除</button>
         </div>
-        <h2 class="item-name" id="disp-name">-</h2>
-        <div class="item-note" id="disp-note"></div>
+        <h2 style="font-size:1.35rem; font-weight:900; margin:6px 0 4px;" id="disp-name">-</h2>
+        <div style="font-size:0.86rem; color:var(--text-sub);" id="disp-note"></div>
 
         <div class="stock-panel" id="detail-stock-panel">
           <div>
@@ -999,7 +1156,7 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">担当者（ログイン社員が自動入力されます）</label>
+          <label class="form-label">担当者</label>
           <input type="text" id="input-staff" readonly style="background: #e2e8f0; color: var(--text-sub); font-weight: 700;">
         </div>
 
@@ -1008,7 +1165,7 @@
           <button class="btn btn-out" id="btn-out" onclick="submitData('出庫')">－ 出庫する</button>
         </div>
 
-        <div id="count-buttons" class="hidden" style="margin-top: 18px;">
+        <div id="count-buttons" class="hidden" style="margin-top: 16px;">
           <button class="btn btn-count" id="btn-count" onclick="submitData('棚卸')">✓ この実数で現在庫を上書き確定</button>
         </div>
       </div>
@@ -1027,57 +1184,7 @@
         <ul class="log-list" id="log-list"></ul>
       </div>
 
-      <button class="btn btn-outline" onclick="resetToScan()">← スキャン画面に戻る</button>
-    </section>
-
-    <!-- 【タブ2】在庫一覧（zaico × Stocker風ハイブリッド） -->
-    <section id="list-section" class="wide-container hidden">
-      <div id="list-undo-banner" class="undo-banner hidden">
-        <div style="font-size: 0.84rem; font-weight: 600;" id="list-undo-text"></div>
-        <button class="undo-btn" onclick="executeUndo()">↩ 1つ前に戻す</button>
-      </div>
-
-      <div class="card" style="padding: 16px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-          <div style="font-weight:800; font-size:1.1rem;">📦 在庫一覧 <span id="list-summary-text" style="font-size:0.82rem; color:var(--text-sub); font-weight:700; margin-left:6px;"></span></div>
-          <button type="button" class="btn btn-primary" style="width:auto; padding:8px 14px; font-size:0.82rem;" onclick="switchTab('register')">＋ 新規商品追加</button>
-        </div>
-
-        <div class="search-toolbar">
-          <input type="text" id="search-input" placeholder="商品名・ID・保管場所で検索..." oninput="filterList()">
-          <select id="category-filter" onchange="filterList()" style="width: auto; max-width: 140px; font-size: 0.84rem; font-weight: 700;">
-            <option value="all">全カテゴリ</option>
-          </select>
-          <button class="icon-btn qr-btn" title="QRコードで検索" onclick="openListScanner()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          </button>
-          <button class="icon-btn" title="更新" onclick="loadInventoryList()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-          </button>
-        </div>
-
-        <div class="filter-bar-row">
-          <button id="pill-all" class="filter-pill active" onclick="setStockFilter('all')">すべて表示</button>
-          <button id="pill-low" class="filter-pill warn" onclick="setStockFilter('low')">⚠️ 在庫少・在庫なし (<span id="low-count-badge">0</span>)</button>
-        </div>
-
-        <div id="order-copy-bar" class="hidden" style="margin-bottom: 12px;">
-          <button type="button" class="btn btn-primary" style="padding: 11px; font-size: 0.88rem;" onclick="copyLowStockOrderList()">
-            📋 要発注リストをテキストコピー <span id="copy-lock-icon">🔒</span>
-          </button>
-        </div>
-
-        <!-- PC表示用の見出し行 -->
-        <div class="pc-table-head">
-          <div>商品名 / カテゴリ / 状態</div>
-          <div>保管場所</div>
-          <div>商品ID</div>
-          <div style="text-align:right; padding-right:12px;">現在庫数 / 発注点</div>
-          <div style="text-align:right;">ワンタップ入出庫</div>
-        </div>
-
-        <ul class="inv-list" id="inventory-list"></ul>
-      </div>
+      <button class="btn btn-outline" onclick="switchTab('list')">← 在庫一覧に戻る</button>
     </section>
 
     <!-- 【タブ3】全体の入出庫履歴 -->
@@ -1110,16 +1217,16 @@
         </div>
         <div class="form-field">
           <label class="form-label">商品名（必須）</label>
-          <input type="text" id="new-name" placeholder="例: 梱包用ダンボール 80サイズ">
+          <input type="text" id="new-name" placeholder="例: 皿頭タッピングビス">
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-field">
             <label class="form-label">カテゴリ（任意）</label>
-            <input type="text" id="new-cat" placeholder="例: 梱包材 / 工具">
+            <input type="text" id="new-cat" placeholder="例: 工具・資材 / 日用品">
           </div>
           <div class="form-field">
             <label class="form-label">単位（任意）</label>
-            <input type="text" id="new-unit" value="個" placeholder="例: 個 / 本 / 箱">
+            <input type="text" id="new-unit" value="個" placeholder="例: 個 / 本 / パック">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -1134,7 +1241,7 @@
         </div>
         <div class="form-field">
           <label class="form-label">保管場所・備考（任意）</label>
-          <input type="text" id="new-note" placeholder="例: A倉庫 棚B-3">
+          <input type="text" id="new-note" placeholder="例: A倉庫 棚1">
         </div>
         <button type="button" class="btn btn-primary" id="create-item-btn" onclick="submitNewItem()">
           商品を登録してQRコードを発行
@@ -1154,65 +1261,47 @@
 
       <div id="panel-portal" class="narrow-container">
         <div class="card" style="background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 60%); border-color: #a7f3d0;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-            <div style="width:42px; height:42px; background:#16a34a; color:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">📊</div>
-            <div>
-              <h2 style="margin:0; font-size:1.08rem; font-weight:800;">データベースポータル（Googleスプレッドシート）</h2>
-              <div style="font-size:0.78rem; color:#065f46; font-weight:600;">自社専用の元データを直接閲覧・編集・バックアップできます</div>
-            </div>
-          </div>
-
+          <h2 class="card-title"><span>📊 データベースポータル（Googleスプレッドシート）</span></h2>
           <a id="portal-main-sheet-link" href="#" target="_blank" rel="noopener" class="btn btn-sheet" style="margin-bottom:12px;">
             🔗 Googleスプレッドシート本体を別タブで開く ↗
           </a>
-
           <div class="portal-grid">
             <a id="portal-card-1" href="#" target="_blank" rel="noopener" class="portal-link-card">
-              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">📦 商品マスタ</div>
-              <div style="font-size:0.75rem; color:var(--text-sub);">商品ID・現在庫・カテゴリ・単位の一覧表</div>
+              <div style="font-weight:800;">📦 商品マスタ</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">商品ID・現在庫・カテゴリ・単位</div>
             </a>
             <a id="portal-card-2" href="#" target="_blank" rel="noopener" class="portal-link-card">
-              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">🕒 入出庫履歴</div>
-              <div style="font-size:0.75rem; color:var(--text-sub);">全スタッフの操作ログと日時記録を確認</div>
+              <div style="font-weight:800;">🕒 入出庫履歴</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">全スタッフの操作ログと日時</div>
             </a>
             <a id="portal-card-3" href="#" target="_blank" rel="noopener" class="portal-link-card">
-              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">👥 社員マスタ</div>
-              <div style="font-size:0.75rem; color:var(--text-sub);">社員パスコードや権限のリストを確認</div>
+              <div style="font-weight:800;">👥 社員マスタ</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">社員パスコードや権限リスト</div>
             </a>
             <a id="portal-card-4" href="#" target="_blank" rel="noopener" class="portal-link-card">
-              <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">💬 保守サポート履歴</div>
-              <div style="font-size:0.75rem; color:var(--text-sub);">F列に返信を記入するとアプリ側へ反映</div>
+              <div style="font-weight:800;">💬 保守サポート履歴</div>
+              <div style="font-size:0.75rem; color:var(--text-sub);">F列に返信を記入すると反映</div>
             </a>
           </div>
         </div>
 
         <div class="card">
-          <h2 class="card-title"><span>🔗 社員用ログインURL（自動入力リンク）</span></h2>
+          <h2 class="card-title"><span>🔗 社員用ログインURL</span></h2>
           <div class="input-group">
             <input type="text" id="portal-login-url" readonly style="font-size:0.82rem; background:#f1f5f9;">
             <button type="button" class="btn btn-outline" style="width:auto; padding:0 16px; font-size:0.82rem;" onclick="copyTenantLoginUrl()">コピー</button>
           </div>
-        </div>
-
-        <div class="card">
-          <h2 class="card-title"><span>💾 データバックアップ（Excel出力）</span></h2>
-          <button type="button" class="btn btn-outline" onclick="exportCurrentInventoryExcel()">
-            📥 現在の全在庫データをExcelダウンロード
-          </button>
         </div>
       </div>
 
       <div id="panel-excel" class="narrow-container hidden">
         <div class="card">
           <h2 class="card-title"><span>📥 エクセル・CSVから一括登録</span></h2>
-          <div style="background: var(--bg); padding: 12px; border-radius: 10px; font-size: 0.84rem; margin-bottom: 14px;">
+          <div style="background: var(--bg); padding: 12px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 14px;">
             <strong>列の並び順（1行目は見出し）：</strong><br>
-            A列:商品ID ／ B列:商品名 ／ C列:現在庫 ／ D列:発注点 ／ E列:保管場所 ／ F列:カテゴリ ／ G列:単位
+            A:商品ID / B:商品名 / C:現在庫 / D:発注点 / E:保管場所 / F:カテゴリ / G:単位
           </div>
-          <button type="button" class="btn btn-outline" style="margin-bottom: 12px;" onclick="downloadSampleExcel()">
-            📄 登録用のエクセル雛形をダウンロード
-          </button>
-          <label class="form-label">エクセルファイルを選択（.xlsx / .csv）</label>
+          <button type="button" class="btn btn-outline" style="margin-bottom: 12px;" onclick="downloadSampleExcel()">📄 登録用のエクセル雛形をダウンロード</button>
           <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv" onchange="handleExcelFile(event)" style="padding: 10px; background: #fff;">
           <div id="excel-preview-area" class="hidden" style="margin-top: 16px;">
             <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary);" id="excel-preview-count"></div>
@@ -1231,15 +1320,15 @@
         <div class="card">
           <h2 class="card-title"><span>⚙️ システム基本設定</span></h2>
           <div class="form-field">
-            <label class="form-label">会社名・店舗名（ヘッダーに表示）</label>
-            <input type="text" id="set-org-name" placeholder="例: StockFlow 倉庫">
+            <label class="form-label">会社名・店舗名</label>
+            <input type="text" id="set-org-name">
           </div>
           <div class="form-field">
             <label class="form-label">保守連絡の通知先メールアドレス</label>
-            <input type="email" id="set-notify-email" placeholder="example@gmail.com">
+            <input type="email" id="set-notify-email">
           </div>
           <div class="form-field">
-            <label class="form-label">連続スキャン時の重複防止待機（秒）</label>
+            <label class="form-label">連続スキャン重複防止待機（秒）</label>
             <input type="number" id="set-scan-delay" value="2" min="1" max="10">
           </div>
           <button type="button" class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()">設定を保存する</button>
@@ -1249,7 +1338,6 @@
           <h2 class="card-title"><span>👥 社員アカウント管理</span></h2>
           <div id="staff-list-container" style="margin-bottom: 16px;"></div>
           <div style="border-top: 1px solid var(--border); padding-top: 14px;">
-            <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">＋ 新しい社員アカウントを追加</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
               <input type="text" id="add-staff-id" placeholder="社員ID (例: STAFF02)">
               <input type="text" id="add-staff-name" placeholder="氏名 (例: 佐藤)">
@@ -1268,9 +1356,8 @@
 
       <div id="panel-chat" class="narrow-container hidden">
         <div class="card">
-          <h2 class="card-title"><span>💬 項目追加・不具合チャット保守窓口</span></h2>
+          <h2 class="card-title"><span>💬 保守チャット窓口</span></h2>
           <div class="form-field">
-            <label class="form-label">ご用件の種類</label>
             <select id="chat-category">
               <option value="項目・機能の追加要望">項目・機能の追加要望</option>
               <option value="不具合・エラーの報告">不具合・エラーの報告</option>
@@ -1278,17 +1365,10 @@
             </select>
           </div>
           <div class="form-field">
-            <label class="form-label">メッセージ内容</label>
-            <textarea id="chat-message" rows="3" placeholder="例: 商品マスタに「仕入先」の項目を追加したいです。"></textarea>
+            <textarea id="chat-message" rows="3" placeholder="ご要望やご質問を入力してください"></textarea>
           </div>
-          <button type="button" class="btn btn-primary" id="chat-send-btn" onclick="submitSupportChat()">保守窓口に送信</button>
-          <div style="margin-top: 20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span class="form-label" style="margin:0;">連絡履歴・管理者からの返信</span>
-              <button type="button" style="border:none; background:none; color:var(--primary); font-weight:700; font-size:0.82rem; cursor:pointer;" onclick="loadSupportHistory()">🔄 更新</button>
-            </div>
-            <div class="chat-box" id="chat-history-box"></div>
-          </div>
+          <button type="button" class="btn btn-primary" id="chat-send-btn" onclick="submitSupportChat()">送信する</button>
+          <div class="chat-box" id="chat-history-box"></div>
         </div>
       </div>
 
@@ -1297,67 +1377,47 @@
           <div class="grid-3">
             <div class="plan-card selected-plan" id="card-plan-trial">
               <div>
-                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-                <h3 style="margin:0 0 6px 0;">フリープラン</h3>
+                <div class="current-plan-ribbon">✓ 選択中</div>
+                <h3>フリープラン</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--in-color); margin-bottom:10px;">初期 0円 / 月額 0円</div>
-                <ul class="plan-features">
-                  <li><strong>QR読み取り＆在庫一覧の閲覧</strong></li>
-                  <li>商品登録 <strong>10件まで</strong></li>
-                  <li class="disabled-feat">連続スキャン・発注コピー・社員追加</li>
-                </ul>
               </div>
-              <button id="btn-plan-trial" class="btn btn-primary" onclick="selectPlanForQuote('trial')">✓ 選択中（適用＆見積反映済）</button>
+              <button id="btn-plan-trial" class="btn btn-primary" onclick="selectPlanForQuote('trial')">✓ 選択中</button>
             </div>
-
             <div class="plan-card" id="card-plan-standard">
               <div>
-                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-                <div style="display:inline-block; background:var(--warn-soft); color:#b45309; border:1px solid #fcd34d; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px; margin-bottom:6px;">一番人気・買い切り</div>
-                <h3 style="margin:0 0 6px 0;">現場導入セットアップ</h3>
+                <div class="current-plan-ribbon">✓ 選択中</div>
+                <h3>現場導入セットアップ</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 30,000円 / 月額 0円</div>
-                <ul class="plan-features">
-                  <li><strong>全機能フル開放（商品数無制限）</strong></li>
-                  <li><strong>連続スキャン・発注コピー・社員管理</strong></li>
-                  <li>専用環境構築＆初期設定一式</li>
-                </ul>
               </div>
-              <button id="btn-plan-standard" class="btn btn-outline" onclick="selectPlanForQuote('standard')">このプランを選択</button>
+              <button id="btn-plan-standard" class="btn btn-outline" onclick="selectPlanForQuote('standard')">選択する</button>
             </div>
-
             <div class="plan-card" id="card-plan-custom">
               <div>
-                <div class="current-plan-ribbon">✓ 現在選択中のプラン</div>
-                <h3 style="margin:0 0 6px 0;">フルカスタム＆安心保守</h3>
+                <div class="current-plan-ribbon">✓ 選択中</div>
+                <h3>フルカスタム＆安心保守</h3>
                 <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin-bottom:10px;">初期 50,000円 / 月 5,000円</div>
-                <ul class="plan-features">
-                  <li><strong>全機能フル利用</strong>＋専用環境構築</li>
-                  <li><strong>独自項目の追加・画面カスタム対応</strong></li>
-                  <li><strong>アプリ内チャット保守窓口</strong></li>
-                </ul>
               </div>
-              <button id="btn-plan-custom" class="btn btn-outline" onclick="selectPlanForQuote('custom')">このプランを選択</button>
+              <button id="btn-plan-custom" class="btn btn-outline" onclick="selectPlanForQuote('custom')">選択する</button>
             </div>
           </div>
 
           <div class="card">
             <h2 class="card-title"><span>📄 簡易お見積書作成</span></h2>
             <div class="form-field">
-              <label class="form-label">宛名（会社名・店舗名）</label>
-              <input type="text" id="q-client" placeholder="例: 株式会社〇〇" oninput="updateQuote()">
+              <input type="text" id="q-client" placeholder="宛名（会社名・店舗名）" oninput="updateQuote()">
             </div>
             <div class="form-field">
-              <label class="form-label">プラン選択</label>
               <select id="q-plan" onchange="selectPlanForQuote(this.value)">
                 <option value="trial" selected>フリープラン（初期 0円 / 月額 0円）</option>
                 <option value="standard">現場導入セットアップ（初期 30,000円 / 月額 0円）</option>
                 <option value="custom">フルカスタム＆安心保守（初期 50,000円 / 月額 5,000円）</option>
               </select>
             </div>
-            <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.9rem;">
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
               <input type="checkbox" id="opt-data" onchange="updateQuote()" style="width:18px; height:18px;">
               既存エクセルデータ初期登録代行（+10,000円）
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:0.9rem;">
+            <label style="display:flex; align-items:center; gap:8px;">
               <input type="checkbox" id="opt-qr" onchange="updateQuote()" style="width:18px; height:18px;">
               印刷用QRラベルPDF一括作成（+5,000円）
             </label>
@@ -1366,16 +1426,13 @@
 
         <div class="quote-sheet">
           <div class="quote-header">御 見 積 書</div>
-          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-            <div style="font-size:1.05rem; font-weight:700; border-bottom:1px solid #64748b; padding-bottom:4px;" id="p-client-name">お客様 御中</div>
-            <div style="font-size:0.84rem; text-align:right;">
-              <div>発行日: <span id="p-date"></span></div>
-              <div>件名: QR在庫管理システム導入</div>
-            </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
+            <div style="font-size:1.05rem; font-weight:700;" id="p-client-name">お客様 御中</div>
+            <div style="font-size:0.84rem; text-align:right;">発行日: <span id="p-date"></span></div>
           </div>
-          <div style="background:var(--primary-soft); border:1px solid var(--primary-border); padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="background:var(--primary-soft); padding:12px; border-radius:8px; display:flex; justify-content:space-between;">
             <strong>初期費用 合計（税込）</strong>
-            <strong style="font-size:1.35rem; color:var(--primary);" id="p-total-tax">0 円</strong>
+            <strong style="font-size:1.3rem; color:var(--primary);" id="p-total-tax">0 円</strong>
           </div>
           <table class="quote-table">
             <thead><tr><th>項目</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th></tr></thead>
@@ -1436,28 +1493,28 @@
     </div>
   </div>
 
-  <!-- 5タブボトムナビゲーション -->
+  <!-- 下部ボトムナビゲーション（2枚目画像風配置） -->
   <nav class="bottom-nav">
     <div class="nav-inner">
-      <button id="tab-scan" class="nav-item active" onclick="switchTab('scan')">
+      <button id="tab-list" class="nav-item active" onclick="switchTab('list')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        <span>ストック一覧</span>
+      </button>
+      <button id="tab-scan" class="nav-item" onclick="switchTab('scan')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line></svg>
         <span>スキャン</span>
       </button>
-      <button id="tab-list" class="nav-item" onclick="switchTab('list')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-        <span>在庫一覧</span>
+      <button id="tab-register" class="nav-item" onclick="switchTab('register')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        <span>新規追加</span>
       </button>
       <button id="tab-history" class="nav-item" onclick="switchTab('history')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        <span>全体履歴</span>
-      </button>
-      <button id="tab-register" class="nav-item" onclick="switchTab('register')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-        <span>新規登録</span>
+        <span>履歴</span>
       </button>
       <button id="tab-tools" class="nav-item" onclick="switchTab('tools')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        <span>管理・設定</span>
+        <span>設定</span>
       </button>
     </div>
   </nav>
@@ -1489,7 +1546,7 @@
     let appSettings = { orgName: 'StockFlow', notifyEmail: '', scanDelay: 2, plan: 'trial' };
     let tenantMeta = { corpCode: '', sheetUrl: '#' };
     let currentItem = null;
-    let currentTab = 'scan';
+    let currentTab = 'list';
     let detailMode = 'inout';
     let scanMode = 'single';
     let contAction = '入庫';
@@ -1554,58 +1611,31 @@
         : baseUrl;
 
       syncPlanUI();
-      if (showPlanScreen) {
-        openPlanSelector();
-      }
-      refreshDashboardKPI();
+      if (showPlanScreen) openPlanSelector();
+      switchTab('list');
     }
 
     function copyTenantLoginUrl() {
       const input = document.getElementById('portal-login-url');
-      navigator.clipboard.writeText(input.value).then(() => {
-        showToast('社員用ログインURLをコピーしました');
-      }).catch(() => {
-        input.select();
-        document.execCommand('copy');
-        showToast('社員用ログインURLをコピーしました');
-      });
+      navigator.clipboard.writeText(input.value).then(() => showToast('社員用ログインURLをコピーしました'));
     }
 
     function syncAllPlanCards(selectedKey) {
-      const planKeys = ['trial', 'standard', 'custom'];
-      const btnTextMap = {
-        trial: 'フリープランで開始（選択中）',
-        standard: '現場導入プランで開始（選択中）',
-        custom: 'フルカスタムプランで開始（選択中）'
-      };
-
-      planKeys.forEach(key => {
+      ['trial', 'standard', 'custom'].forEach(key => {
         const isSelected = (key === selectedKey);
-
         const wCard = document.getElementById('welcome-card-' + key);
         const wBtn = document.getElementById('welcome-btn-' + key);
         if (wCard && wBtn) {
           wCard.classList.toggle('selected-plan', isSelected);
-          if (isSelected) {
-            wBtn.className = 'btn btn-primary';
-            wBtn.textContent = '✓ ' + btnTextMap[key];
-          } else {
-            wBtn.className = 'btn btn-outline';
-            wBtn.textContent = 'このプランに切り替える';
-          }
+          wBtn.className = isSelected ? 'btn btn-primary' : 'btn btn-outline';
+          wBtn.textContent = isSelected ? '✓ 選択中' : 'このプランに切り替える';
         }
-
         const qCard = document.getElementById('card-plan-' + key);
         const qBtn = document.getElementById('btn-plan-' + key);
         if (qCard && qBtn) {
           qCard.classList.toggle('selected-plan', isSelected);
-          if (isSelected) {
-            qBtn.className = 'btn btn-primary';
-            qBtn.textContent = '✓ 選択中（適用＆見積反映済）';
-          } else {
-            qBtn.className = 'btn btn-outline';
-            qBtn.textContent = 'このプランを選択';
-          }
+          qBtn.className = isSelected ? 'btn btn-primary' : 'btn btn-outline';
+          qBtn.textContent = isSelected ? '✓ 選択中' : '選択する';
         }
       });
     }
@@ -1613,7 +1643,6 @@
     function syncPlanUI() {
       const plan = appSettings.plan || 'trial';
       const isFree = (plan === 'trial');
-
       const pill = document.getElementById('header-plan-badge');
       pill.textContent = `${PLAN_LABELS[plan] || 'フリープラン'} ▾`;
       pill.classList.toggle('pro', !isFree);
@@ -1622,10 +1651,7 @@
       document.getElementById('register-limit-badge').classList.toggle('hidden', !isFree);
       document.getElementById('cont-lock-icon').classList.toggle('hidden', !isFree);
       document.getElementById('copy-lock-icon').classList.toggle('hidden', !isFree);
-
-      if (isFree && scanMode === 'cont') {
-        setScanMode('single');
-      }
+      if (isFree && scanMode === 'cont') setScanMode('single');
 
       document.getElementById('q-plan').value = plan;
       syncAllPlanCards(plan);
@@ -1648,24 +1674,18 @@
       sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
       syncPlanUI();
       showToast(`「${PLAN_LABELS[planKey]}」を適用しました`);
-
       try {
         const updated = await callGasApi('updateActivePlan', [planKey]);
         appSettings = updated;
         sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
         syncPlanUI();
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) { console.error(e); }
     }
 
     async function unlockApp() {
       const corp = document.getElementById('login-corp').value.trim();
       const pass = document.getElementById('login-pass').value.trim();
-      if (!corp || !pass) {
-        alert('会社コードと社員パスコードを入力してください。');
-        return;
-      }
+      if (!corp || !pass) return alert('会社コードと社員パスコードを入力してください。');
 
       const btn = document.getElementById('unlock-btn');
       btn.disabled = true;
@@ -1679,7 +1699,6 @@
           currentUser = res.staff;
           appSettings = res.settings;
           tenantMeta = { corpCode: res.corpCode, sheetUrl: res.sheetUrl };
-
           sessionStorage.setItem('sf_user', JSON.stringify(currentUser));
           sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
           sessionStorage.setItem('sf_meta', JSON.stringify(tenantMeta));
@@ -1698,9 +1717,7 @@
 
     function lockApp() {
       stopScanner();
-      sessionStorage.removeItem('sf_token');
-      sessionStorage.removeItem('sf_user');
-      sessionStorage.removeItem('sf_meta');
+      sessionStorage.clear();
       currentUser = null;
       window.location.href = 'index.html';
     }
@@ -1709,17 +1726,13 @@
       try {
         const items = await callGasApi('getAllItems');
         allItemsCache = items || [];
-        const totalItems = allItemsCache.length;
         const totalStock = allItemsCache.reduce((sum, i) => sum + (Number(i.stock) || 0), 0);
         const lowItems = allItemsCache.filter(i => i.stock <= i.minStock);
-
-        document.getElementById('kpi-total-items').textContent = totalItems;
+        document.getElementById('kpi-total-items').textContent = allItemsCache.length;
         document.getElementById('kpi-total-stock').textContent = totalStock.toLocaleString();
         document.getElementById('kpi-low-items').textContent = lowItems.length + ' 件';
         document.getElementById('low-count-badge').textContent = lowItems.length;
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) { console.error(e); }
     }
 
     function jumpToLowStock() {
@@ -1731,14 +1744,12 @@
       const toast = document.getElementById('toast');
       toast.textContent = msg;
       toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 2600);
+      setTimeout(() => toast.classList.add('hidden'), 2500);
     }
 
     function setScanMode(mode) {
       if (mode === 'cont' && appSettings.plan === 'trial') {
-        if (confirm('⚡ 連続スキャンは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('⚡ 連続スキャンは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) openPlanSelector();
         return;
       }
       scanMode = mode;
@@ -1750,15 +1761,8 @@
 
     function setContAction(action) {
       contAction = action;
-      const btnIn = document.getElementById('cont-type-in');
-      const btnOut = document.getElementById('cont-type-out');
-      if (action === '入庫') {
-        btnIn.className = 'btn btn-in';
-        btnOut.className = 'btn btn-outline';
-      } else {
-        btnIn.className = 'btn btn-outline';
-        btnOut.className = 'btn btn-out';
-      }
+      document.getElementById('cont-type-in').className = action === '入庫' ? 'btn btn-in' : 'btn btn-outline';
+      document.getElementById('cont-type-out').className = action === '出庫' ? 'btn btn-out' : 'btn btn-outline';
     }
 
     function startScanner() {
@@ -1777,29 +1781,19 @@
           handleContinuousScan(decodedText);
         }
       };
-
       html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {})
         .catch(() => {
           Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length > 0) {
-              html5QrCode.start(devices[0].id, config, onScanSuccess, () => {});
-            } else {
-              alert("カメラが見つかりません。権限設定を確認してください。");
-              stopScanner();
-            }
-          }).catch(err => {
-            alert("カメラ起動エラー: " + err);
-            stopScanner();
-          });
+            if (devices && devices.length > 0) html5QrCode.start(devices[0].id, config, onScanSuccess, () => {});
+            else { alert("カメラが見つかりません。"); stopScanner(); }
+          }).catch(err => { alert("カメラ起動エラー: " + err); stopScanner(); });
         });
     }
 
     function stopScanner() {
       document.getElementById('start-scan-btn').classList.remove('hidden');
       document.getElementById('stop-scan-btn').classList.add('hidden');
-      if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
-      }
+      if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
     }
 
     async function handleContinuousScan(code) {
@@ -1808,36 +1802,27 @@
       if (code === lastScannedCode && (now - lastScannedTime) < delayMs) return;
       lastScannedCode = code;
       lastScannedTime = now;
-
       showToast(`⚡ ${code} を${contAction}(+1)処理中...`);
-
       try {
         const res = await callGasApi('recordTransaction', [code, contAction, 1]);
-        lastTransaction = {
-          itemId: res.itemId,
-          itemName: res.itemName,
-          prevStock: res.prevStock,
-          newStock: res.newStock,
-          type: res.type
-        };
+        lastTransaction = { itemId: res.itemId, itemName: res.itemName, prevStock: res.prevStock, newStock: res.newStock, type: res.type };
         updateUndoBanners();
         refreshDashboardKPI();
-
-        const logList = document.getElementById('cont-log-list');
         const row = document.createElement('div');
         row.className = 'cont-log-row';
         row.innerHTML = `<span>${res.itemName} (${res.type})</span><strong>現在庫: ${res.newStock}</strong>`;
-        logList.prepend(row);
+        document.getElementById('cont-log-list').prepend(row);
         showToast(`✓ ${res.itemName}: ${res.prevStock} → ${res.newStock}`);
-      } catch (err) {
-        alert(err.message);
-      }
+      } catch (err) { alert(err.message); }
     }
 
     function switchTab(tabName) {
       currentTab = tabName;
       ['scan', 'list', 'history', 'register', 'tools'].forEach(t => {
-        document.getElementById('tab-' + t).classList.remove('active');
+        const el = document.getElementById('tab-' + t);
+        if (el) el.classList.remove('active');
+        const pcEl = document.getElementById('pc-tab-' + t);
+        if (pcEl) pcEl.classList.remove('active');
       });
       document.getElementById('loading-box').classList.add('hidden');
       closeListScanner();
@@ -1846,8 +1831,13 @@
         document.getElementById(id).classList.add('hidden');
       });
 
+      document.getElementById('fab-add-btn').classList.toggle('hidden', tabName !== 'list');
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.getElementById('tab-' + tabName).classList.add('active');
+      const activeBottom = document.getElementById('tab-' + tabName);
+      if (activeBottom) activeBottom.classList.add('active');
+      const activePc = document.getElementById('pc-tab-' + tabName);
+      if (activePc) activePc.classList.add('active');
 
       if (tabName === 'scan') {
         resetToScan();
@@ -1880,7 +1870,6 @@
     async function loadGlobalHistory() {
       document.getElementById('history-section').classList.add('hidden');
       document.getElementById('loading-box').classList.remove('hidden');
-
       try {
         const list = await callGasApi('getGlobalHistory');
         if (currentTab !== 'history') return;
@@ -1888,41 +1877,27 @@
         globalHistoryCache = list || [];
         filterGlobalHistory();
         document.getElementById('history-section').classList.remove('hidden');
-      } catch (err) {
-        if (currentTab === 'history') onError(err);
-      }
+      } catch (err) { if (currentTab === 'history') onError(err); }
     }
 
     function filterGlobalHistory() {
       const kw = document.getElementById('history-search').value.toLowerCase().trim();
-      const filtered = kw
-        ? globalHistoryCache.filter(h =>
-            h.itemName.toLowerCase().includes(kw) ||
-            h.itemId.toLowerCase().includes(kw) ||
-            h.staff.toLowerCase().includes(kw) ||
-            h.type.toLowerCase().includes(kw)
-          )
-        : globalHistoryCache;
+      const filtered = kw ? globalHistoryCache.filter(h =>
+        h.itemName.toLowerCase().includes(kw) || h.itemId.toLowerCase().includes(kw) || h.staff.toLowerCase().includes(kw) || h.type.toLowerCase().includes(kw)
+      ) : globalHistoryCache;
 
       const ul = document.getElementById('global-history-list');
-      ul.innerHTML = '';
-      if (filtered.length === 0) {
-        ul.innerHTML = '<li style="padding: 24px; text-align: center; color: var(--text-sub);">履歴がありません</li>';
-        return;
-      }
+      ul.innerHTML = filtered.length === 0 ? '<li style="padding:24px; text-align:center; color:var(--text-sub);">履歴がありません</li>' : '';
       filtered.forEach(h => {
-        let pillClass = 'pill-other';
-        if (h.type === '入庫') pillClass = 'pill-in';
-        if (h.type === '出庫') pillClass = 'pill-out';
+        let pillClass = h.type === '入庫' ? 'pill-in' : (h.type === '出庫' ? 'pill-out' : 'pill-other');
         ul.innerHTML += `
           <li class="log-item">
             <div>
-              <div style="font-weight: 700;">${h.itemName} <span style="font-size:0.78rem; color:var(--text-sub);">(${h.itemId})</span></div>
-              <div style="font-size: 0.78rem; color: var(--text-sub);">${h.date} ・ 担当: ${h.staff || '未設定'}</div>
+              <div style="font-weight:700;">${h.itemName} <span style="font-size:0.76rem; color:var(--text-sub);">(${h.itemId})</span></div>
+              <div style="font-size:0.76rem; color:var(--text-sub);">${h.date} ・ 担当: ${h.staff || '未設定'}</div>
             </div>
             <span class="pill ${pillClass}">${h.type} ${h.qty}</span>
-          </li>
-        `;
+          </li>`;
       });
     }
 
@@ -1937,6 +1912,7 @@
       currentTab = 'scan';
       document.getElementById('scan-section').classList.add('hidden');
       document.getElementById('detail-section').classList.add('hidden');
+      document.getElementById('fab-add-btn').classList.add('hidden');
       document.getElementById('loading-box').classList.remove('hidden');
 
       try {
@@ -1948,7 +1924,7 @@
             switchTab('register');
             document.getElementById('new-id').value = res.id;
           } else {
-            resetToScan();
+            switchTab('list');
           }
           return;
         }
@@ -1965,7 +1941,6 @@
         document.getElementById('disp-min-stock').textContent = `発注点: ${currentItem.minStock} ${unit}`;
 
         setDetailMode(detailMode);
-
         const panel = document.getElementById('detail-stock-panel');
         const label = document.getElementById('detail-stock-label');
         panel.classList.toggle('low', isLow);
@@ -1973,39 +1948,23 @@
 
         const qrContainer = document.getElementById('item-qrcode');
         qrContainer.innerHTML = '';
-        new QRCode(qrContainer, {
-          text: currentItem.id,
-          width: 140,
-          height: 140,
-          colorDark: "#0f172a",
-          colorLight: "#ffffff"
-        });
+        new QRCode(qrContainer, { text: currentItem.id, width: 140, height: 140, colorDark: "#0f172a", colorLight: "#ffffff" });
         document.getElementById('qr-caption-text').textContent = `${currentItem.id} / ${currentItem.name}`;
 
         const logList = document.getElementById('log-list');
-        logList.innerHTML = '';
-        if (res.logs.length === 0) {
-          logList.innerHTML = '<li style="color:var(--text-sub); padding:8px 0;">履歴はまだありません</li>';
-        } else {
-          res.logs.forEach(log => {
-            let pillClass = 'pill-other';
-            if (log.type === '入庫') pillClass = 'pill-in';
-            if (log.type === '出庫') pillClass = 'pill-out';
-            const staffText = log.staff ? ` ・ ${log.staff}` : '';
-            logList.innerHTML += `
-              <li class="log-item">
-                <span style="color:var(--text-sub);">${log.date}${staffText}</span>
-                <span class="pill ${pillClass}">${log.type} ${log.qty}</span>
-              </li>
-            `;
-          });
-        }
+        logList.innerHTML = res.logs.length === 0 ? '<li style="color:var(--text-sub); padding:8px 0;">履歴はまだありません</li>' : '';
+        res.logs.forEach(log => {
+          let pillClass = log.type === '入庫' ? 'pill-in' : (log.type === '出庫' ? 'pill-out' : 'pill-other');
+          logList.innerHTML += `
+            <li class="log-item">
+              <span style="color:var(--text-sub);">${log.date}${log.staff ? ' ・ ' + log.staff : ''}</span>
+              <span class="pill ${pillClass}">${log.type} ${log.qty}</span>
+            </li>`;
+        });
 
         updateUndoBanners();
         document.getElementById('detail-section').classList.remove('hidden');
-      } catch (err) {
-        if (currentTab === 'scan') onError(err);
-      }
+      } catch (err) { if (currentTab === 'scan') onError(err); }
     }
 
     function openEditModal() {
@@ -2017,10 +1976,7 @@
       document.getElementById('edit-note').value = currentItem.note;
       document.getElementById('edit-item-modal').classList.remove('hidden');
     }
-
-    function closeEditModal() {
-      document.getElementById('edit-item-modal').classList.add('hidden');
-    }
+    function closeEditModal() { document.getElementById('edit-item-modal').classList.add('hidden'); }
 
     async function submitEditItem() {
       const name = document.getElementById('edit-name').value.trim();
@@ -2028,67 +1984,44 @@
       const unit = document.getElementById('edit-unit').value.trim() || '個';
       const min = document.getElementById('edit-min').value;
       const note = document.getElementById('edit-note').value.trim();
-
       const btn = document.getElementById('save-edit-btn');
       btn.disabled = true;
-      btn.textContent = '保存中...';
-
       try {
         await callGasApi('updateItemDetails', [currentItem.id, name, min, note, cat, unit]);
         closeEditModal();
         showToast('商品情報を更新しました');
         fetchItem(currentItem.id);
-      } catch (err) {
-        alert('更新エラー: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '変更を保存';
-      }
+      } catch (err) { alert('更新エラー: ' + err.message); } finally { btn.disabled = false; }
     }
 
     async function submitDeleteItem() {
-      if (!currentItem) return;
-      if (!confirm(`商品「${currentItem.name}（${currentItem.id}）」をマスタから削除しますか？`)) return;
-
-      const btn = document.getElementById('delete-item-btn');
-      btn.disabled = true;
-
+      if (!currentItem || !confirm(`商品「${currentItem.name}」を削除しますか？`)) return;
       try {
         await callGasApi('deleteItem', [currentItem.id]);
         closeEditModal();
         showToast('商品を削除しました');
         switchTab('list');
-      } catch (err) {
-        alert('削除エラー: ' + err.message);
-      } finally {
-        btn.disabled = false;
-      }
+      } catch (err) { alert('削除エラー: ' + err.message); }
     }
 
     function changeQty(delta) {
       const input = document.getElementById('input-qty');
-      const minVal = (detailMode === 'count') ? 0 : 1;
-      input.value = Math.max(minVal, (Number(input.value) || 0) + delta);
+      input.value = Math.max(detailMode === 'count' ? 0 : 1, (Number(input.value) || 0) + delta);
     }
 
     function setDetailMode(mode) {
       detailMode = mode;
       document.getElementById('mode-inout-btn').classList.toggle('active', mode === 'inout');
       document.getElementById('mode-count-btn').classList.toggle('active', mode === 'count');
-
       const qtyInput = document.getElementById('input-qty');
-      const qtyLabel = document.getElementById('qty-field-label');
-
       if (mode === 'inout') {
-        qtyLabel.textContent = '入出庫する数量';
-        qtyInput.min = 1;
-        qtyInput.value = 1;
+        document.getElementById('qty-field-label').textContent = '入出庫する数量';
+        qtyInput.min = 1; qtyInput.value = 1;
         document.getElementById('inout-buttons').classList.remove('hidden');
         document.getElementById('count-buttons').classList.add('hidden');
       } else {
-        qtyLabel.textContent = '実際に数えた在庫数（実数）';
-        qtyInput.min = 0;
-        qtyInput.value = currentItem ? currentItem.stock : 0;
+        document.getElementById('qty-field-label').textContent = '実際に数えた在庫数（実数）';
+        qtyInput.min = 0; qtyInput.value = currentItem ? currentItem.stock : 0;
         document.getElementById('inout-buttons').classList.add('hidden');
         document.getElementById('count-buttons').classList.remove('hidden');
       }
@@ -2097,44 +2030,21 @@
     async function submitData(type) {
       if (!currentItem) return;
       const qty = document.getElementById('input-qty').value;
-
-      document.getElementById('btn-in').disabled = true;
-      document.getElementById('btn-out').disabled = true;
-      document.getElementById('btn-count').disabled = true;
-
       try {
         const res = await callGasApi('recordTransaction', [currentItem.id, type, qty]);
-        lastTransaction = {
-          itemId: res.itemId,
-          itemName: res.itemName,
-          prevStock: res.prevStock,
-          newStock: res.newStock,
-          type: res.type
-        };
+        lastTransaction = { itemId: res.itemId, itemName: res.itemName, prevStock: res.prevStock, newStock: res.newStock, type: res.type };
         showToast(`${res.type}完了（現在庫: ${res.newStock}）`);
         fetchItem(currentItem.id);
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        document.getElementById('btn-in').disabled = false;
-        document.getElementById('btn-out').disabled = false;
-        document.getElementById('btn-count').disabled = false;
-      }
+      } catch (err) { alert(err.message); }
     }
 
     function updateUndoBanners() {
-      const banners = [
-        { box: 'undo-banner', text: 'undo-text' },
-        { box: 'detail-undo-banner', text: 'detail-undo-text' },
-        { box: 'list-undo-banner', text: 'list-undo-text' }
-      ];
-      banners.forEach(b => {
+      [{ box: 'undo-banner', text: 'undo-text' }, { box: 'detail-undo-banner', text: 'detail-undo-text' }, { box: 'list-undo-banner', text: 'list-undo-text' }].forEach(b => {
         const boxEl = document.getElementById(b.box);
         const txtEl = document.getElementById(b.text);
         if (!boxEl || !txtEl) return;
-        if (!lastTransaction) {
-          boxEl.classList.add('hidden');
-        } else {
+        if (!lastTransaction) boxEl.classList.add('hidden');
+        else {
           txtEl.textContent = `直前: ${lastTransaction.itemName}（${lastTransaction.type}：${lastTransaction.prevStock} → ${lastTransaction.newStock}）`;
           boxEl.classList.remove('hidden');
         }
@@ -2142,60 +2052,36 @@
     }
 
     async function executeUndo() {
-      if (!lastTransaction) return;
-      if (!confirm(`直前の操作（${lastTransaction.itemName}：${lastTransaction.newStock} → ${lastTransaction.prevStock}）を取り消しますか？`)) return;
-
+      if (!lastTransaction || !confirm(`直前の操作（${lastTransaction.itemName}：${lastTransaction.newStock} → ${lastTransaction.prevStock}）を取り消しますか？`)) return;
       const target = lastTransaction;
       lastTransaction = null;
       updateUndoBanners();
-
       try {
         const res = await callGasApi('undoLastTransaction', [target.itemId, target.prevStock]);
         showToast(`取り消し完了（現在庫: ${res.restoredStock}）`);
-        if (!document.getElementById('detail-section').classList.contains('hidden') && currentItem && currentItem.id === target.itemId) {
-          fetchItem(currentItem.id);
-        } else if (currentTab === 'list') {
-          loadInventoryList();
-        } else {
-          refreshDashboardKPI();
-        }
-      } catch (err) {
-        alert('取り消しエラー: ' + err.message);
-      }
+        if (!document.getElementById('detail-section').classList.contains('hidden')) fetchItem(currentItem.id);
+        else if (currentTab === 'list') loadInventoryList();
+        else refreshDashboardKPI();
+      } catch (err) { alert('取り消しエラー: ' + err.message); }
     }
 
     function downloadQrLabel() {
       if (!currentItem) return;
       const source = document.querySelector('#item-qrcode canvas') || document.querySelector('#item-qrcode img');
       if (!source) return;
-
-      const labelCanvas = document.createElement('canvas');
-      labelCanvas.width = 360;
-      labelCanvas.height = 440;
-      const ctx = labelCanvas.getContext('2d');
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 360, 440);
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(4, 4, 352, 432);
+      const canvas = document.createElement('canvas');
+      canvas.width = 360; canvas.height = 440;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 360, 440);
       ctx.drawImage(source, 50, 32, 260, 260);
-
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 26px sans-serif';
-      ctx.textAlign = 'center';
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText(currentItem.id, 180, 342);
-
-      ctx.fillStyle = '#475569';
-      ctx.font = 'bold 20px sans-serif';
-      const dispName = currentItem.name.length > 14 ? currentItem.name.slice(0, 14) + '…' : currentItem.name;
-      ctx.fillText(dispName, 180, 382);
-
+      ctx.fillStyle = '#475569'; ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(currentItem.name.slice(0, 14), 180, 382);
       const link = document.createElement('a');
       link.download = `QR_${currentItem.id}.png`;
-      link.href = labelCanvas.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png');
       link.click();
-      showToast('QR画像を保存しました');
     }
 
     function resetToScan() {
@@ -2206,10 +2092,10 @@
       updateUndoBanners();
     }
 
+    // ★在庫一覧の読み込み
     async function loadInventoryList() {
       document.getElementById('list-section').classList.add('hidden');
       document.getElementById('loading-box').classList.remove('hidden');
-
       try {
         const items = await callGasApi('getAllItems');
         if (currentTab !== 'list') return;
@@ -2224,18 +2110,14 @@
         const catSelect = document.getElementById('category-filter');
         const prevCat = catSelect.value;
         const cats = [...new Set(allItemsCache.map(i => i.category || '未分類'))];
-        catSelect.innerHTML = '<option value="all">全カテゴリ</option>';
-        cats.forEach(c => {
-          catSelect.innerHTML += `<option value="${c}">${c}</option>`;
-        });
+        catSelect.innerHTML = '<option value="all">カテゴリ：すべて</option>';
+        cats.forEach(c => { catSelect.innerHTML += `<option value="${c}">${c}</option>`; });
         if (cats.includes(prevCat)) catSelect.value = prevCat;
 
         updateUndoBanners();
         filterList();
         document.getElementById('list-section').classList.remove('hidden');
-      } catch (err) {
-        if (currentTab === 'list') onError(err);
-      }
+      } catch (err) { if (currentTab === 'list') onError(err); }
     }
 
     function setStockFilter(mode) {
@@ -2248,41 +2130,22 @@
 
     function copyLowStockOrderList() {
       if (appSettings.plan === 'trial') {
-        if (confirm('📋 要発注リストの一括コピーは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('📋 要発注リストの一括コピーは「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) openPlanSelector();
         return;
       }
-
       const lowItems = allItemsCache.filter(i => i.stock <= i.minStock);
-      if (lowItems.length === 0) {
-        showToast('現在、要発注の商品はありません');
-        return;
-      }
-      const today = new Date();
-      const dateStr = `${today.getMonth() + 1}/${today.getDate()}`;
-      const lines = [`【発注依頼リスト（${dateStr}時点）】`];
-      lowItems.forEach(i => {
-        const u = i.unit || '個';
-        lines.push(`・${i.name}（${i.id}）：現在庫 ${i.stock}${u} / 発注点 ${i.minStock}${u}`);
-      });
-      const text = lines.join('\n');
-
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('📋 発注リストをクリップボードにコピーしました！');
-      }).catch(() => {
-        alert(text);
-      });
+      if (lowItems.length === 0) return showToast('現在、要発注の商品はありません');
+      const lines = ['【発注依頼リスト】'];
+      lowItems.forEach(i => lines.push(`・${i.name}（${i.id}）：現在庫 ${i.stock}${i.unit || '個'} / 発注点 ${i.minStock}${i.unit || '個'}`));
+      navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('📋 発注リストをコピーしました！'));
     }
 
+    // ★2枚目画像再現：ワンタップ「− 消費」「＋ 購入」即反映
     async function quickAdjustStock(event, itemId, type) {
       event.stopPropagation();
       const target = allItemsCache.find(i => i.id === itemId);
       if (!target) return;
-      if (type === '出庫' && target.stock <= 0) {
-        showToast('⚠️ 在庫が0のため出庫できません');
-        return;
-      }
+      if (type === '出庫' && target.stock <= 0) return showToast('⚠️ 在庫が0のため消費できません');
 
       const prevStock = target.stock;
       target.stock = (type === '入庫') ? prevStock + 1 : prevStock - 1;
@@ -2291,13 +2154,7 @@
 
       try {
         const res = await callGasApi('recordTransaction', [itemId, type, 1]);
-        lastTransaction = {
-          itemId: res.itemId,
-          itemName: res.itemName,
-          prevStock: res.prevStock,
-          newStock: res.newStock,
-          type: res.type
-        };
+        lastTransaction = { itemId: res.itemId, itemName: res.itemName, prevStock: res.prevStock, newStock: res.newStock, type: res.type };
         updateUndoBanners();
         const lowCount = allItemsCache.filter(i => i.stock <= i.minStock).length;
         const totalStock = allItemsCache.reduce((s, i) => s + (Number(i.stock) || 0), 0);
@@ -2310,6 +2167,7 @@
       }
     }
 
+    // ★1枚目(zaico) × 2枚目(Stocker) 融合リスト描画
     function filterList() {
       const keyword = document.getElementById('search-input').value.toLowerCase().trim();
       const selectedCat = document.getElementById('category-filter').value;
@@ -2327,59 +2185,49 @@
       }
 
       const listEl = document.getElementById('inventory-list');
-      listEl.innerHTML = '';
-      if (filtered.length === 0) {
-        listEl.innerHTML = '<li style="padding: 28px; text-align: center; color: var(--text-sub);">該当する商品はありません</li>';
-        return;
-      }
+      listEl.innerHTML = filtered.length === 0 ? '<li style="padding:28px; text-align:center; color:var(--text-sub);">該当する商品はありません</li>' : '';
 
       filtered.forEach(item => {
         const li = document.createElement('li');
-        li.className = 'inv-row';
+        li.className = 'inv-item-row';
 
         const unit = item.unit || '個';
         const cat = item.category || '未分類';
         const isOut = item.stock <= 0;
         const isLow = !isOut && item.stock <= item.minStock;
+        const diff = item.stock - item.minStock;
+        const diffText = diff >= 0 ? `▲ +${diff}` : `▲ ${diff}`;
 
-        let statusHtml = `<span class="status-pill status-ok">在庫あり</span>`;
-        let numClass = '';
-        if (isOut) {
-          statusHtml = `<span class="status-pill status-out">在庫なし</span>`;
-          numClass = 'out';
-        } else if (isLow) {
-          statusHtml = `<span class="status-pill status-low">在庫少</span>`;
-          numClass = 'low';
-        }
+        let statusBadge = `<span class="st-pill st-ok">在庫あり</span>`;
+        if (isOut) statusBadge = `<span class="st-pill st-out">在庫なし</span>`;
+        else if (isLow) statusBadge = `<span class="st-pill st-low">在庫少</span>`;
 
-        const placeHtml = item.note ? `<span>📍 ${item.note}</span>` : '';
+        const placeTxt = item.note ? `<span>📍 ${item.note}</span>` : '';
 
         li.innerHTML = `
-          <div class="inv-main-click" onclick="openItemFromList('${item.id}')">
-            <div style="margin-bottom:4px;">
-              <span class="cat-badge">${cat}</span>
-              ${statusHtml}
-            </div>
-            <div class="inv-title-line">${item.name}</div>
-            <div class="inv-meta-line">
-              <span>${item.id}</span>
-              ${placeHtml}
-            </div>
-          </div>
+          <div class="item-thumb-box" onclick="openItemFromList('${item.id}')">📦</div>
 
-          <div class="pc-only-col">${item.note ? '📍 ' + item.note : '-'}</div>
-          <div class="pc-only-col" style="font-family:monospace; font-weight:700;">${item.id}</div>
-
-          <div class="quick-action-group" style="justify-content:flex-end;">
-            <div class="stock-num-box" onclick="openItemFromList('${item.id}')">
-              <div class="stock-num-val ${numClass}">${item.stock.toLocaleString()}<span class="stock-unit-txt"> ${unit}</span></div>
-              <div style="font-size:0.68rem; color:var(--text-sub);">発注点: ${item.minStock}</div>
+          <div class="inv-info-col" onclick="openItemFromList('${item.id}')">
+            <div><span class="cat-tag">${cat}</span></div>
+            <div class="inv-name-txt">${item.name}</div>
+            <div class="stocker-status-row">
+              ${statusBadge}
+              <span style="font-size:0.76rem; color:var(--text-sub); font-weight:700;">${item.stock.toLocaleString()}${unit}</span>
+              ${placeTxt ? `<span style="font-size:0.74rem; color:var(--text-sub);">${placeTxt}</span>` : ''}
             </div>
           </div>
 
-          <div class="quick-action-group" style="justify-content:flex-end;">
-            <button type="button" class="q-btn minus" onclick="quickAdjustStock(event, '${item.id}', '出庫')">− 消費</button>
-            <button type="button" class="q-btn plus" onclick="quickAdjustStock(event, '${item.id}', '入庫')">＋ 追加</button>
+          <div class="pc-col-cell">${item.note ? '📍 ' + item.note : '-'}</div>
+          <div class="pc-col-cell" style="font-family:monospace;">${item.id}</div>
+
+          <div class="stock-col-box" onclick="openItemFromList('${item.id}')">
+            <div><span class="diff-badge ${isOut || isLow ? 'danger' : ''}">${diffText}</span></div>
+            <div class="stock-big-num ${isOut || isLow ? 'danger' : ''}">${item.stock.toLocaleString()}<span class="stock-unit-small"> ${unit}</span></div>
+          </div>
+
+          <div class="stocker-btn-pair">
+            <button type="button" class="stk-btn consume" onclick="quickAdjustStock(event, '${item.id}', '出庫')">− 消費</button>
+            <button type="button" class="stk-btn purchase" onclick="quickAdjustStock(event, '${item.id}', '入庫')">＋ 購入</button>
           </div>
         `;
         listEl.appendChild(li);
@@ -2387,8 +2235,10 @@
     }
 
     function openItemFromList(itemId) {
-      document.getElementById('tab-list').classList.remove('active');
-      document.getElementById('tab-scan').classList.add('active');
+      ['list', 'scan', 'register', 'history', 'tools'].forEach(t => {
+        const b = document.getElementById('tab-' + t);
+        if (b) b.classList.toggle('active', t === 'scan');
+      });
       document.getElementById('list-section').classList.add('hidden');
       fetchItem(itemId);
     }
@@ -2411,35 +2261,24 @@
           }).catch(() => closeListScanner());
         });
     }
-
     function closeListScanner() {
       document.getElementById('list-qr-modal').classList.add('hidden');
-      if (listQrCode && listQrCode.isScanning) {
-        listQrCode.stop().then(() => listQrCode.clear()).catch(() => {});
-      }
+      if (listQrCode && listQrCode.isScanning) listQrCode.stop().then(() => listQrCode.clear()).catch(() => {});
     }
 
     async function autoFillNextId() {
       const btn = document.getElementById('auto-id-btn');
       btn.disabled = true;
-      try {
-        const nextId = await callGasApi('getNextItemId');
-        document.getElementById('new-id').value = nextId;
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.disabled = false;
-      }
+      try { document.getElementById('new-id').value = await callGasApi('getNextItemId'); }
+      catch (err) { alert(err.message); }
+      finally { btn.disabled = false; }
     }
 
     async function submitNewItem() {
       if (appSettings.plan === 'trial' && allItemsCache.length >= 10) {
-        if (confirm('フリープランの商品登録上限（10件まで）に達しています。\n全機能プランに切り替えますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('フリープランの商品登録上限（10件まで）に達しています。\n全機能プランに切り替えますか？')) openPlanSelector();
         return;
       }
-
       const id = document.getElementById('new-id').value.trim();
       const name = document.getElementById('new-name').value.trim();
       const cat = document.getElementById('new-cat').value.trim() || '未分類';
@@ -2447,13 +2286,10 @@
       const stock = document.getElementById('new-stock').value;
       const min = document.getElementById('new-min').value;
       const note = document.getElementById('new-note').value.trim();
-
       if (!id || !name) return alert('商品IDと商品名を入力してください。');
 
       const btn = document.getElementById('create-item-btn');
       btn.disabled = true;
-      btn.textContent = '登録中...';
-
       try {
         const res = await callGasApi('createNewItem', [id, name, stock, min, note, cat, unit]);
         document.getElementById('new-id').value = '';
@@ -2463,55 +2299,33 @@
         document.getElementById('new-stock').value = '0';
         document.getElementById('new-note').value = '';
         showToast(`「${res.name}」を登録しました！`);
-
-        document.getElementById('tab-register').classList.remove('active');
-        document.getElementById('tab-scan').classList.add('active');
-        document.getElementById('register-section').classList.add('hidden');
-        fetchItem(res.id);
-      } catch (err) {
-        alert('登録エラー: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '商品を登録してQRコードを発行';
-      }
+        openItemFromList(res.id);
+      } catch (err) { alert('登録エラー: ' + err.message); }
+      finally { btn.disabled = false; }
     }
 
     async function loadSettingsAndStaff() {
       try {
-        const [s, staffList] = await Promise.all([
-          callGasApi('getAppSettings'),
-          callGasApi('getStaffList')
-        ]);
-        appSettings.orgName = s.orgName;
-        appSettings.notifyEmail = s.notifyEmail;
-        appSettings.scanDelay = s.scanDelay;
+        const [s, staffList] = await Promise.all([callGasApi('getAppSettings'), callGasApi('getStaffList')]);
+        appSettings = { ...appSettings, ...s };
         document.getElementById('set-org-name').value = s.orgName;
         document.getElementById('set-notify-email').value = s.notifyEmail;
         document.getElementById('set-scan-delay').value = s.scanDelay;
         renderStaffList(staffList);
-      } catch (err) {
-        alert(err.message);
-      }
+      } catch (err) { alert(err.message); }
     }
 
     async function saveSettings() {
       const org = document.getElementById('set-org-name').value.trim();
       const email = document.getElementById('set-notify-email').value.trim();
       const delay = document.getElementById('set-scan-delay').value;
-
-      const btn = document.getElementById('save-settings-btn');
-      btn.disabled = true;
       try {
         const s = await callGasApi('saveAppSettings', [org, email, delay, appSettings.plan]);
         appSettings = s;
         sessionStorage.setItem('sf_settings', JSON.stringify(s));
         document.getElementById('header-org-name').textContent = s.orgName;
-        showToast('システム設定を保存しました');
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.disabled = false;
-      }
+        showToast('設定を保存しました');
+      } catch (err) { alert(err.message); }
     }
 
     function renderStaffList(list) {
@@ -2520,73 +2334,47 @@
       list.forEach(st => {
         box.innerHTML += `
           <div class="staff-row">
-            <div>
-              <div style="font-weight: 700;">${st.name} <span style="font-size: 0.75rem; color: var(--primary); background: var(--primary-soft); padding: 2px 7px; border-radius: 6px;">${st.role}</span></div>
-              <div style="font-size: 0.78rem; color: var(--text-sub);">ID: ${st.id} ／ パスコード: ${st.passcode}</div>
-            </div>
-            <button type="button" class="btn btn-danger-outline" style="width: auto; padding: 6px 10px; font-size: 0.78rem;" onclick="removeStaff('${st.id}')">削除</button>
-          </div>
-        `;
+            <div><strong>${st.name}</strong> (${st.role})<br><span style="font-size:0.76rem; color:var(--text-sub);">ID: ${st.id} / パス: ${st.passcode}</span></div>
+            <button type="button" class="btn btn-danger-outline" style="width:auto; padding:5px 10px; font-size:0.76rem;" onclick="removeStaff('${st.id}')">削除</button>
+          </div>`;
       });
     }
 
     async function createStaffAccount() {
       if (appSettings.plan === 'trial') {
-        if (confirm('社員アカウントの追加は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('社員追加は「現場導入セットアップ」以上で利用できます。プランを変更しますか？')) openPlanSelector();
         return;
       }
-
       const id = document.getElementById('add-staff-id').value.trim();
       const name = document.getElementById('add-staff-name').value.trim();
       const pass = document.getElementById('add-staff-pass').value.trim();
       const role = document.getElementById('add-staff-role').value;
-
-      const btn = document.getElementById('add-staff-btn');
-      btn.disabled = true;
       try {
         const list = await callGasApi('addStaffAccount', [id, name, pass, role]);
         document.getElementById('add-staff-id').value = '';
         document.getElementById('add-staff-name').value = '';
         document.getElementById('add-staff-pass').value = '';
         renderStaffList(list);
-        showToast('社員アカウントを追加しました');
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.disabled = false;
-      }
+        showToast('社員を追加しました');
+      } catch (err) { alert(err.message); }
     }
 
     async function removeStaff(id) {
-      if (!confirm(`社員ID「${id}」のアカウントを削除しますか？`)) return;
-      try {
-        const list = await callGasApi('deleteStaffAccount', [id]);
-        renderStaffList(list);
-        showToast('アカウントを削除しました');
-      } catch (err) {
-        alert(err.message);
-      }
+      if (!confirm(`社員ID「${id}」を削除しますか？`)) return;
+      try { renderStaffList(await callGasApi('deleteStaffAccount', [id])); }
+      catch (err) { alert(err.message); }
     }
 
     async function exportCurrentInventoryExcel() {
-      showToast('在庫データを取得中...');
+      showToast('Excel出力中...');
       try {
         const items = await callGasApi('getAllItems');
         const wb = XLSX.utils.book_new();
         const wsData = [['商品ID', '商品名', '現在庫数', '発注点', '保管場所・備考', 'カテゴリ', '単位']];
-        items.forEach(i => {
-          wsData.push([i.id, i.name, i.stock, i.minStock, i.note, i.category || '未分類', i.unit || '個']);
-        });
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, '在庫一覧');
-        const today = new Date().toISOString().slice(0, 10);
-        XLSX.writeFile(wb, `StockFlow_在庫データ_${today}.xlsx`);
-        showToast('Excelファイルをダウンロードしました');
-      } catch (err) {
-        alert('出力エラー: ' + err.message);
-      }
+        items.forEach(i => wsData.push([i.id, i.name, i.stock, i.minStock, i.note, i.category || '未分類', i.unit || '個']));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), '在庫一覧');
+        XLSX.writeFile(wb, `StockFlow_在庫データ_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      } catch (err) { alert(err.message); }
     }
 
     function downloadSampleExcel() {
@@ -2596,8 +2384,7 @@
         ['ITEM-001', '皿頭タッピングビス', 50, 10, 'A倉庫 棚1', '工具・資材', '本'],
         ['ITEM-002', '梱包用ダンボール 80サイズ', 3, 5, 'B倉庫 棚2', '梱包材', '枚']
       ];
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
-      XLSX.utils.book_append_sheet(wb, ws, '商品マスタ');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), '商品マスタ');
       XLSX.writeFile(wb, '商品一括登録サンプル.xlsx');
     }
 
@@ -2606,13 +2393,11 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
         parsedExcelRows = [];
         const tbody = document.getElementById('excel-preview-tbody');
         tbody.innerHTML = '';
-
         for (let i = 1; i < rows.length; i++) {
           const r = rows[i];
           if (!r || !r[0]) continue;
@@ -2636,84 +2421,41 @@
 
     async function executeBulkImport() {
       if (appSettings.plan === 'trial') {
-        if (confirm('Excel一括登録は「現場導入セットアップ」以上のプランで利用できます。\nプラン選択画面を開きますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('Excel一括登録は「現場導入セットアップ」以上で利用できます。プランを変更しますか？')) openPlanSelector();
         return;
       }
-
-      if (parsedExcelRows.length === 0) return;
-      const btn = document.getElementById('excel-import-btn');
-      btn.disabled = true;
       try {
         const res = await callGasApi('bulkImportItems', [parsedExcelRows]);
-        alert(`一括登録完了！\n・新規追加: ${res.added} 件\n・上書き更新: ${res.updated} 件`);
-        document.getElementById('excel-file-input').value = '';
+        alert(`一括登録完了！（新規: ${res.added}件 / 更新: ${res.updated}件）`);
         document.getElementById('excel-preview-area').classList.add('hidden');
-        refreshDashboardKPI();
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.disabled = false;
-      }
+      } catch (err) { alert(err.message); }
     }
 
     async function loadSupportHistory() {
-      try {
-        const list = await callGasApi('getSupportMessages');
-        renderSupportHistory(list);
-      } catch (err) {
-        console.error(err);
-      }
+      try { renderSupportHistory(await callGasApi('getSupportMessages')); } catch (e) {}
     }
 
     async function submitSupportChat() {
       if (appSettings.plan !== 'custom') {
-        if (confirm('チャット保守窓口は「フルカスタム＆安心保守」プラン限定です。\nプラン選択画面を開きますか？')) {
-          openPlanSelector();
-        }
+        if (confirm('チャット保守窓口は「フルカスタム＆安心保守」限定です。プランを変更しますか？')) openPlanSelector();
         return;
       }
-
       const cat = document.getElementById('chat-category').value;
       const msg = document.getElementById('chat-message').value.trim();
-      if (!msg) return alert('メッセージ内容を入力してください。');
-
-      const btn = document.getElementById('chat-send-btn');
-      btn.disabled = true;
+      if (!msg) return;
       try {
-        const list = await callGasApi('sendSupportMessage', [cat, msg]);
+        renderSupportHistory(await callGasApi('sendSupportMessage', [cat, msg]));
         document.getElementById('chat-message').value = '';
-        renderSupportHistory(list);
-        showToast('送信完了しました');
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.disabled = false;
-      }
+        showToast('送信しました');
+      } catch (err) { alert(err.message); }
     }
 
     function renderSupportHistory(list) {
       const box = document.getElementById('chat-history-box');
-      if (!list || list.length === 0) {
-        box.innerHTML = '<div style="text-align:center; color:var(--text-sub); font-size:0.85rem;">履歴はありません</div>';
-        return;
-      }
-      box.innerHTML = '';
-      list.forEach(item => {
-        const replyHtml = item.reply
-          ? `<div class="admin-reply-box"><strong>💬 管理者からの返信:</strong><br><span style="white-space:pre-wrap;">${item.reply}</span></div>`
-          : '';
-        box.innerHTML += `
-          <div class="chat-msg">
-            <div class="chat-msg-head">
-              <span><span class="chat-cat">${item.category}</span> ${item.sender}</span>
-              <span>${item.date}</span>
-            </div>
-            <div style="white-space: pre-wrap;">${item.message}</div>
-            ${replyHtml}
-          </div>
-        `;
+      box.innerHTML = (!list || list.length === 0) ? '<div style="text-align:center; color:var(--text-sub);">履歴はありません</div>' : '';
+      (list || []).forEach(item => {
+        const rep = item.reply ? `<div class="admin-reply-box"><strong>💬 返信:</strong> ${item.reply}</div>` : '';
+        box.innerHTML += `<div class="chat-msg"><div class="chat-msg-head"><span><span class="chat-cat">${item.category}</span> ${item.sender}</span><span>${item.date}</span></div><div>${item.message}</div>${rep}</div>`;
       });
     }
 
@@ -2723,65 +2465,38 @@
       sessionStorage.setItem('sf_settings', JSON.stringify(appSettings));
       syncPlanUI();
       showToast(`「${PLAN_LABELS[planKey]}」を選択しました`);
-
-      try {
-        await callGasApi('updateActivePlan', [planKey]);
-      } catch (e) {
-        console.error(e);
-      }
+      try { await callGasApi('updateActivePlan', [planKey]); } catch (e) {}
     }
 
     function updateQuote() {
-      const clientInput = document.getElementById('q-client').value.trim();
-      document.getElementById('p-client-name').textContent = (clientInput || 'お客様') + ' 御中';
-
+      document.getElementById('p-client-name').textContent = (document.getElementById('q-client').value.trim() || 'お客様') + ' 御中';
       const planKey = document.getElementById('q-plan').value;
       syncAllPlanCards(planKey);
-
       const rows = [];
       let monthlyFee = 0;
-
-      if (planKey === 'trial') {
-        rows.push({ name: 'フリープラン（QR読み取り・在庫一覧閲覧／商品10件まで）', qty: 1, price: 0 });
-      } else if (planKey === 'standard') {
-        rows.push({ name: '現場導入セットアップ（全機能フル開放・専用環境構築・初期設定一式）', qty: 1, price: 30000 });
-      } else if (planKey === 'custom') {
-        rows.push({ name: 'フルカスタム＆安心保守（全機能フル利用・独自項目カスタム・チャット保守）', qty: 1, price: 50000 });
-        monthlyFee = 5000;
-      }
-
-      if (document.getElementById('opt-data').checked) {
-        rows.push({ name: '【オプション】既存エクセルデータ初期登録代行', qty: 1, price: 10000 });
-      }
-      if (document.getElementById('opt-qr').checked) {
-        rows.push({ name: '【オプション】印刷用QRラベルPDF一括作成', qty: 1, price: 5000 });
-      }
+      if (planKey === 'trial') rows.push({ name: 'フリープラン（商品10件まで）', qty: 1, price: 0 });
+      else if (planKey === 'standard') rows.push({ name: '現場導入セットアップ（全機能無制限・買い切り）', qty: 1, price: 30000 });
+      else if (planKey === 'custom') { rows.push({ name: 'フルカスタム＆安心保守', qty: 1, price: 50000 }); monthlyFee = 5000; }
+      if (document.getElementById('opt-data').checked) rows.push({ name: '既存エクセルデータ初期登録代行', qty: 1, price: 10000 });
+      if (document.getElementById('opt-qr').checked) rows.push({ name: '印刷用QRラベルPDF一括作成', qty: 1, price: 5000 });
 
       let subtotal = 0;
       const tbody = document.getElementById('p-tbody');
       tbody.innerHTML = '';
       rows.forEach(r => {
-        const lineTotal = r.qty * r.price;
-        subtotal += lineTotal;
-        tbody.innerHTML += `<tr><td>${r.name}</td><td class="num">${r.qty}</td><td class="num">${r.price.toLocaleString()}円</td><td class="num">${lineTotal.toLocaleString()}円</td></tr>`;
+        subtotal += r.qty * r.price;
+        tbody.innerHTML += `<tr><td>${r.name}</td><td class="num">${r.qty}</td><td class="num">${r.price.toLocaleString()}円</td><td class="num">${(r.qty * r.price).toLocaleString()}円</td></tr>`;
       });
-
       const tax = Math.floor(subtotal * 0.1);
-      const total = subtotal + tax;
-      tbody.innerHTML += `
-        <tr style="background:#f8fafc;"><td colspan="3" class="num">小計（税抜）</td><td class="num">${subtotal.toLocaleString()}円</td></tr>
-        <tr style="background:#f8fafc;"><td colspan="3" class="num">消費税（10%）</td><td class="num">${tax.toLocaleString()}円</td></tr>
-      `;
-      document.getElementById('p-total-tax').textContent = `${total.toLocaleString()} 円`;
-      document.getElementById('p-note').innerHTML = monthlyFee > 0
-        ? `※初期費用とは別に、月額サポート費用として <strong>${monthlyFee.toLocaleString()}円（税抜）/月</strong> が発生します。`
-        : `※Googleスプレッドシートを利用するため、<strong>サーバー維持費・月額固定費は0円</strong>です。`;
+      tbody.innerHTML += `<tr><td colspan="3" class="num">小計（税抜）</td><td class="num">${subtotal.toLocaleString()}円</td></tr><tr><td colspan="3" class="num">消費税（10%）</td><td class="num">${tax.toLocaleString()}円</td></tr>`;
+      document.getElementById('p-total-tax').textContent = `${(subtotal + tax).toLocaleString()} 円`;
+      document.getElementById('p-note').innerHTML = monthlyFee > 0 ? `※月額保守費用：${monthlyFee.toLocaleString()}円（税抜）/月` : `※月額固定費は0円です。`;
     }
 
     function onError(err) {
       document.getElementById('loading-box').classList.add('hidden');
       alert('エラー: ' + err.message);
-      resetToScan();
+      switchTab('list');
     }
   </script>
 </body>
