@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockFlow | スマホひとつで完結する次世代クラウドQR在庫管理</title>
+  <title>StockFlow | 在庫管理、スマホで完結。クラウドQR在庫管理システム</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #060b19;
-      --bg-card: rgba(15, 23, 42, 0.72);
+      --bg: #050a18;
+      --bg-surface: #0b132b;
+      --bg-card: rgba(15, 23, 42, 0.78);
       --border: rgba(148, 163, 184, 0.16);
-      --primary: #3b82f6;
-      --primary-glow: rgba(59, 130, 246, 0.45);
+      --primary: #2563eb;
+      --primary-light: #60a5fa;
+      --primary-glow: rgba(37, 99, 235, 0.45);
       --accent: #06b6d4;
       --emerald: #10b981;
+      --warn: #f59e0b;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
     }
@@ -22,61 +25,66 @@
 
     body {
       margin: 0;
-      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
       overflow-x: hidden;
-      line-height: 1.65;
+      line-height: 1.68;
     }
 
+    /* 背景の光のグラデーション演出 */
     .bg-mesh {
       position: fixed;
       inset: 0;
       z-index: -1;
       overflow: hidden;
-      background: radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.18), transparent 45%),
-                  radial-gradient(circle at 85% 75%, rgba(6, 182, 212, 0.15), transparent 45%),
-                  #060b19;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.22), transparent 42%),
+        radial-gradient(circle at 88% 70%, rgba(6, 182, 212, 0.16), transparent 45%),
+        #050a18;
     }
     .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(80px);
+      filter: blur(90px);
       opacity: 0.45;
-      animation: floatOrb 14s ease-in-out infinite alternate;
+      animation: floatOrb 15s ease-in-out infinite alternate;
     }
-    .orb-1 { width: 380px; height: 380px; background: #2563eb; top: -80px; left: -60px; }
-    .orb-2 { width: 320px; height: 320px; background: #06b6d4; bottom: 10%; right: -80px; animation-delay: -5s; }
+    .orb-1 { width: 420px; height: 420px; background: #2563eb; top: -100px; left: -80px; }
+    .orb-2 { width: 350px; height: 350px; background: #06b6d4; bottom: 8%; right: -90px; animation-delay: -6s; }
     @keyframes floatOrb {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, 30px) scale(1.12); }
+      100% { transform: translate(45px, 35px) scale(1.12); }
     }
 
+    /* スクロール連動アニメーション */
     .reveal {
       opacity: 0;
-      transform: translateY(32px);
-      transition: all 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(28px);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .reveal.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
+    /* ヘッダー */
     header {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(6, 11, 25, 0.78);
+      background: rgba(5, 10, 24, 0.82);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
+      padding: 13px 20px;
     }
     .nav-wrap {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
     .logo {
       display: flex;
@@ -100,18 +108,23 @@
     }
     .nav-links {
       display: none;
-      gap: 28px;
+      gap: 24px;
     }
-    @media (min-width: 768px) { .nav-links { display: flex; } }
+    @media (min-width: 860px) { .nav-links { display: flex; } }
     .nav-links a {
       color: var(--text-sub);
       text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
       transition: color 0.2s;
     }
     .nav-links a:hover { color: #fff; }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .btn-glow {
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
       color: #fff;
@@ -126,6 +139,7 @@
       text-decoration: none;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
     }
     .btn-glow:hover {
@@ -136,10 +150,10 @@
       background: rgba(255, 255, 255, 0.06);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.18);
-      padding: 13px 24px;
+      padding: 10px 18px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       cursor: pointer;
       backdrop-filter: blur(8px);
       transition: all 0.2s;
@@ -147,82 +161,108 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
     }
     .btn-glass:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.14);
       border-color: rgba(255, 255, 255, 0.35);
     }
 
+    /* ヒーローセクション（nanco × zaico風ハイブリッド） */
     .hero {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
-      padding: 64px 20px 80px;
+      padding: 56px 20px 72px;
       display: grid;
       grid-template-columns: 1fr;
       gap: 48px;
       align-items: center;
     }
-    @media (min-width: 900px) {
-      .hero { grid-template-columns: 1.15fr 0.85fr; padding: 90px 20px 100px; }
+    @media (min-width: 920px) {
+      .hero { grid-template-columns: 1.18fr 0.82fr; padding: 80px 20px 90px; }
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
     }
     .pill-tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(59, 130, 246, 0.14);
-      border: 1px solid rgba(59, 130, 246, 0.35);
+      gap: 6px;
+      background: rgba(37, 99, 235, 0.16);
+      border: 1px solid rgba(96, 165, 250, 0.35);
       color: #60a5fa;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 20px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+    .pill-tag.green {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(52, 211, 153, 0.35);
+      color: #34d399;
     }
     .hero h1 {
-      font-size: clamp(2.1rem, 5vw, 3.4rem);
+      font-size: clamp(2.1rem, 4.8vw, 3.35rem);
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.18;
       letter-spacing: -0.03em;
-      margin: 0 0 20px 0;
+      margin: 0 0 18px 0;
     }
     .grad-text {
       background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 50%, #34d399 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .hero p {
+    .hero-lead {
       color: var(--text-sub);
-      font-size: 1.05rem;
-      margin: 0 0 32px 0;
-      max-width: 540px;
+      font-size: 1.04rem;
+      margin: 0 0 28px 0;
+      max-width: 560px;
+    }
+    .hero-checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 20px;
+      margin-bottom: 30px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .hero-checks span::before {
+      content: "✓ ";
+      color: #34d399;
+      font-weight: 900;
     }
     .hero-btns {
       display: flex;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 12px;
     }
 
+    /* 動くスマホモックアップ */
     .phone-stage {
       display: flex;
       justify-content: center;
       perspective: 1000px;
     }
     .phone-frame {
-      width: 300px;
+      width: 310px;
       background: #0f172a;
       border: 3px solid #334155;
-      border-radius: 38px;
+      border-radius: 40px;
       padding: 16px;
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.25);
-      animation: hoverPhone 4.5s ease-in-out infinite;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), 0 0 45px rgba(37, 99, 235, 0.28);
+      animation: hoverPhone 4.8s ease-in-out infinite;
     }
     @keyframes hoverPhone {
-      0%, 100% { transform: translateY(0) rotateY(-4deg); }
-      50% { transform: translateY(-12px) rotateY(4deg); }
+      0%, 100% { transform: translateY(0) rotateY(-3deg); }
+      50% { transform: translateY(-10px) rotateY(3deg); }
     }
     .phone-notch {
-      width: 100px;
+      width: 104px;
       height: 18px;
       background: #020617;
       border-radius: 0 0 12px 12px;
@@ -230,7 +270,7 @@
     }
     .mock-qr-box {
       position: relative;
-      height: 170px;
+      height: 168px;
       background: #020617;
       border-radius: 18px;
       display: flex;
@@ -242,20 +282,20 @@
     }
     .scan-laser {
       position: absolute;
-      left: 14px;
-      right: 14px;
+      left: 16px;
+      right: 16px;
       height: 3px;
       background: #22d3ee;
       box-shadow: 0 0 14px #22d3ee, 0 0 28px #3b82f6;
       animation: laserMove 2.4s ease-in-out infinite;
     }
     @keyframes laserMove {
-      0%, 100% { top: 20px; }
-      50% { top: 145px; }
+      0%, 100% { top: 22px; }
+      50% { top: 142px; }
     }
     .mock-card {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.15);
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 14px;
       padding: 12px;
       margin-bottom: 10px;
@@ -270,53 +310,147 @@
       border-radius: 6px;
     }
 
-    .stats-bar {
-      max-width: 1000px;
-      margin: 0 auto 80px;
+    /* 4つの導入メリットバー */
+    .merit-strip {
+      max-width: 1140px;
+      margin: 0 auto 70px;
       padding: 0 20px;
     }
-    .stats-grid {
+    .merit-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
+    }
+    @media (min-width: 768px) { .merit-grid { grid-template-columns: repeat(4, 1fr); } }
+    .merit-box {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 26px 16px;
-      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px 16px;
       text-align: center;
+      backdrop-filter: blur(12px);
     }
-    .stat-num {
-      font-size: clamp(1.6rem, 4vw, 2.5rem);
+    .merit-big {
+      font-size: clamp(1.5rem, 3.2vw, 2.1rem);
       font-weight: 900;
       color: #fff;
+      line-height: 1.2;
+      margin-bottom: 4px;
     }
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      font-weight: 700;
-    }
+    .merit-big span { color: #38bdf8; font-size: 1rem; }
+    .merit-sub { font-size: 0.8rem; color: var(--text-sub); font-weight: 700; }
 
+    /* セクション共通 */
     .section {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
-      padding: 60px 20px;
+      padding: 64px 20px;
+    }
+    .sec-tag {
+      display: inline-block;
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
     .sec-head {
       text-align: center;
       margin-bottom: 48px;
     }
     .sec-head h2 {
-      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      font-size: clamp(1.65rem, 3.6vw, 2.45rem);
       font-weight: 900;
       margin: 0 0 12px 0;
+      letter-spacing: -0.02em;
     }
     .sec-head p {
       color: var(--text-sub);
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto;
+      font-size: 0.98rem;
     }
 
+    /* Before / After 課題解決（zaico風） */
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 820px) { .ba-grid { grid-template-columns: 1fr 1fr; } }
+    .ba-card {
+      border-radius: 24px;
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+    }
+    .ba-card.before {
+      background: rgba(15, 23, 42, 0.55);
+    }
+    .ba-card.after {
+      background: linear-gradient(145deg, rgba(37, 99, 235, 0.2) 0%, rgba(6, 182, 212, 0.14) 100%);
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+    .ba-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0 0;
+    }
+    .ba-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 0.92rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .ba-list li:last-child { border-bottom: none; }
+
+    /* インタラクティブ画面プレビュー（nanco SCREENS風） */
+    .screen-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .scr-tab {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .scr-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .screen-showcase {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+    @media (min-width: 820px) { .screen-showcase { grid-template-columns: 1fr 1fr; padding: 40px; } }
+    .showcase-ui {
+      background: #f8fafc;
+      color: #0f172a;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    /* 機能カードグリッド */
     .feat-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -327,59 +461,54 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 28px 24px;
+      padding: 26px 22px;
       backdrop-filter: blur(12px);
       transition: transform 0.25s, border-color 0.25s;
     }
     .feat-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(59, 130, 246, 0.5);
+      transform: translateY(-5px);
+      border-color: rgba(56, 189, 248, 0.5);
     }
     .feat-icon {
       width: 48px;
       height: 48px;
       border-radius: 14px;
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(37, 99, 235, 0.18);
       color: #60a5fa;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    .feat-card h3 {
-      margin: 0 0 10px 0;
-      font-size: 1.15rem;
-    }
-    .feat-card p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: var(--text-sub);
-    }
+    .feat-card h3 { margin: 0 0 8px 0; font-size: 1.12rem; }
+    .feat-card p { margin: 0; font-size: 0.88rem; color: var(--text-sub); }
 
+    /* 料金プラン＆機能比較表（zaico風） */
     .price-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 22px;
+      gap: 20px;
       align-items: stretch;
+      margin-bottom: 40px;
     }
     @media (min-width: 840px) { .price-grid { grid-template-columns: repeat(3, 1fr); } }
     .price-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 30px 24px;
+      padding: 28px 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       transition: transform 0.25s;
     }
-    .price-card:hover { transform: translateY(-6px); }
+    .price-card:hover { transform: translateY(-5px); }
     .price-card.popular {
       border: 2px solid var(--primary);
-      background: linear-gradient(180deg, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
-      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.22);
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(15, 23, 42, 0.88) 100%);
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.25);
     }
     .pop-badge {
       position: absolute;
@@ -392,33 +521,98 @@
       font-weight: 800;
       padding: 4px 14px;
       border-radius: 999px;
+      white-space: nowrap;
     }
     .price-val {
       font-size: 2rem;
       font-weight: 900;
-      margin: 12px 0;
+      margin: 10px 0;
     }
     .price-list {
       list-style: none;
       padding: 0;
-      margin: 0 0 24px 0;
-      font-size: 0.9rem;
+      margin: 0 0 22px 0;
+      font-size: 0.88rem;
     }
     .price-list li {
       padding: 8px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
       color: #e2e8f0;
     }
     .price-list li.off { color: #64748b; text-decoration: line-through; }
 
-    .login-box-wrap {
-      max-width: 460px;
+    /* 比較テーブル */
+    .comp-wrap {
+      overflow-x: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      min-width: 600px;
+    }
+    .comp-table th, .comp-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      text-align: center;
+    }
+    .comp-table th:first-child, .comp-table td:first-child {
+      text-align: left;
+      font-weight: 700;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .chk-yes { color: #34d399; font-weight: 900; font-size: 1.05rem; }
+    .chk-no { color: #64748b; }
+
+    /* FAQ アコーディオン */
+    .faq-list {
+      max-width: 780px;
       margin: 0 auto;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(59, 130, 246, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 18px 20px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .faq-a {
+      padding: 0 20px 18px;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      display: none;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ログインボックス＆モーダル */
+    .login-box-wrap {
+      max-width: 440px;
+      margin: 0 auto;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(56, 189, 248, 0.4);
       border-radius: 26px;
       padding: 34px 28px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65);
       text-align: center;
     }
     .login-input {
@@ -432,12 +626,12 @@
       margin-bottom: 12px;
       outline: none;
     }
-    .login-input:focus { border-color: var(--primary); }
+    .login-input:focus { border-color: var(--primary-light); }
 
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.82);
+      background: rgba(2, 6, 23, 0.85);
       backdrop-filter: blur(8px);
       z-index: 100;
       display: flex;
@@ -464,6 +658,7 @@
     <div class="orb orb-2"></div>
   </div>
 
+  <!-- ヘッダー -->
   <header>
     <div class="nav-wrap">
       <a href="#" class="logo">
@@ -473,38 +668,51 @@
         <span>StockFlow</span>
       </a>
       <nav class="nav-links">
-        <a href="#features">できること</a>
-        <a href="#flow">導入の流れ</a>
-        <a href="#pricing">料金プラン</a>
-        <a href="#login-area">ログイン</a>
+        <a href="#problem">導入効果</a>
+        <a href="#screens">画面イメージ</a>
+        <a href="#features">機能一覧</a>
+        <a href="#pricing">料金・比較表</a>
+        <a href="#faq">よくある質問</a>
       </nav>
-      <button class="btn-glow" onclick="openLoginModal()">アプリにログイン →</button>
+      <div class="header-actions">
+        <a href="#pricing" class="btn-glass" style="display:none;" id="hdr-price-btn">料金を見る</a>
+        <button class="btn-glow" onclick="openLoginModal()">ログインして使う →</button>
+      </div>
     </div>
   </header>
 
+  <!-- ヒーローセクション -->
   <section class="hero">
     <div class="reveal">
-      <div class="pill-tag">⚡ 専用ハンディ端末不要・スマホだけで即導入</div>
+      <div class="hero-badges">
+        <span class="pill-tag">📱 専用機器不要・スマホ1台で完結</span>
+        <span class="pill-tag green">📊 Googleスプレッドシート完全同期</span>
+      </div>
       <h1>
-        現場の在庫管理を、<br>
-        <span class="grad-text">スマホのQRスキャン</span>で<br>
-        驚くほどシンプルに。
+        在庫管理、<span class="grad-text">スマホで完結。</span><br>
+        ピッ、で現場が速く動く。
       </h1>
-      <p>
-        高価な専用機器や複雑なソフトはもう不要。お手持ちのスマートフォンでQRコードを読み取るだけで、入出庫・棚卸・発注点アラート・Googleスプレッドシート連携までリアルタイムに完結します。
+      <p class="hero-lead">
+        高価な専用ハンディ端末も、複雑なマニュアルも不要。今お使いのスマートフォンでQRコードを読み取るだけで、入出庫・棚卸・発注アラート・スプレッドシート連携がリアルタイムに完了します。
       </p>
+      <div class="hero-checks">
+        <span>ユーザー数無制限</span>
+        <span>初期0円から無料体験</span>
+        <span>QRラベル自動発行</span>
+      </div>
       <div class="hero-btns">
-        <button class="btn-glow" style="padding: 15px 28px; font-size: 1rem;" onclick="openLoginModal()">今すぐログインして使う →</button>
-        <a href="#pricing" class="btn-glass">料金プランを見る</a>
+        <button class="btn-glow" style="padding: 15px 28px; font-size: 1rem;" onclick="openLoginModal()">今すぐログインして始める →</button>
+        <a href="#screens" class="btn-glass" style="padding: 15px 24px; font-size: 0.96rem;">実際の画面を見る</a>
       </div>
     </div>
 
+    <!-- 動くスマホモックアップ -->
     <div class="phone-stage reveal">
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:0.78rem; font-weight:700;">
           <span>📷 QRスキャン実行中</span>
-          <span style="color:#34d399;">● クラウド同期</span>
+          <span style="color:#34d399;">● リアルタイム同期</span>
         </div>
         <div class="mock-qr-box">
           <div class="scan-laser"></div>
@@ -512,162 +720,340 @@
         </div>
         <div class="mock-card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="mock-badge">✓ 読み取り完了</span>
+            <span class="mock-badge">✓ 1秒で認識完了</span>
             <span style="font-size:0.72rem; color:#94a3b8;">ITEM-001</span>
           </div>
           <div style="font-weight:800; font-size:0.95rem; margin:6px 0 2px;">梱包用ダンボール 80サイズ</div>
           <div style="display:flex; justify-content:space-between; align-items:baseline;">
-            <span style="font-size:0.76rem; color:#94a3b8;">現在庫数（自動更新）</span>
+            <span style="font-size:0.76rem; color:#94a3b8;">現在庫数（自動反映）</span>
             <span style="font-size:1.45rem; font-weight:900; color:#38bdf8;" id="mock-stock-num">48 個</span>
           </div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <div style="background:#10b981; color:#fff; text-align:center; padding:8px; border-radius:10px; font-size:0.8rem; font-weight:800;">＋ 入庫</div>
-          <div style="background:#ef4444; color:#fff; text-align:center; padding:8px; border-radius:10px; font-size:0.8rem; font-weight:800;">－ 出庫</div>
+          <div style="background:#10b981; color:#fff; text-align:center; padding:9px; border-radius:10px; font-size:0.82rem; font-weight:800;">＋ 入庫する</div>
+          <div style="background:#ef4444; color:#fff; text-align:center; padding:9px; border-radius:10px; font-size:0.82rem; font-weight:800;">－ 出庫する</div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="stats-bar reveal">
-    <div class="stats-grid">
-      <div>
-        <div class="stat-num" data-target="0">0 円</div>
-        <div class="stat-label">専用端末の導入コスト</div>
+  <!-- 4つの数字実績バー -->
+  <div class="merit-strip reveal">
+    <div class="merit-grid">
+      <div class="merit-box">
+        <div class="merit-big">0 <span>円</span></div>
+        <div class="merit-sub">専用ハンディ端末の導入費</div>
       </div>
-      <div>
-        <div class="stat-num" data-target="3">3 秒</div>
-        <div class="stat-label">1商品あたりの入出庫処理</div>
+      <div class="merit-box">
+        <div class="merit-big">無制限 <span>名</span></div>
+        <div class="merit-sub">スタッフ追加の月額課金なし</div>
       </div>
-      <div>
-        <div class="stat-num" data-target="100">100 %</div>
-        <div class="stat-label">Googleスプレッドシート同期</div>
+      <div class="merit-box">
+        <div class="merit-big">最短 <span>即日</span></div>
+        <div class="merit-sub">アプリインストール不要で開始</div>
+      </div>
+      <div class="merit-box">
+        <div class="merit-big">100 <span>%</span></div>
+        <div class="merit-sub">スプレッドシート＆Excel互換</div>
       </div>
     </div>
   </div>
 
+  <!-- Before / After 課題解決セクション（zaico風） -->
+  <section id="problem" class="section">
+    <div class="sec-head reveal">
+      <div class="sec-tag">WHY STOCKFLOW</div>
+      <h2>アナログ管理の「ズレ・手間・属人化」をゼロに</h2>
+      <p>紙の台帳や事務所のExcelへ転記する運用から、現場のスマホで直接更新するスタイルへ。</p>
+    </div>
+
+    <div class="ba-grid">
+      <div class="ba-card before reveal">
+        <div style="display:inline-block; background:rgba(239,68,68,0.18); color:#fca5a5; font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px;">導入前のよくあるお悩み</div>
+        <h3 style="margin:12px 0 6px; font-size:1.25rem;">紙やExcelの在庫管理が限界…</h3>
+        <ul class="ba-list">
+          <li><span>❌</span><span>現場でメモした紙を事務所のパソコンに転記する二度手間が発生</span></li>
+          <li><span>❌</span><span>「データ上はあるのに倉庫にない」という欠品・発注漏れが起きる</span></li>
+          <li><span>❌</span><span>他社SaaSはユーザー数が増えるたびに月額料金が高額になる</span></li>
+          <li><span>❌</span><span>棚卸のたびに手書きのカウント表を集計して何時間も残業している</span></li>
+        </ul>
+      </div>
+
+      <div class="ba-card after reveal">
+        <div style="display:inline-block; background:rgba(16,185,129,0.22); color:#6ee7b7; font-size:0.78rem; font-weight:800; padding:4px 12px; border-radius:999px;">StockFlow 導入後</div>
+        <h3 style="margin:12px 0 6px; font-size:1.25rem;">現場でスキャンした瞬間に全員へ共有</h3>
+        <ul class="ba-list">
+          <li><span>✅</span><span><strong>スマホでQRをピッと読むだけ</strong>で入出庫・棚卸がその場で完了</span></li>
+          <li><span>✅</span><span>発注点を下回った商品は自動で「要発注」に抽出＆発注リスト一発コピー</span></li>
+          <li><span>✅</span><span><strong>社員何人でも追加費用なし</strong>。各自のパスコードで操作履歴も自動記録</span></li>
+          <li><span>✅</span><span>裏側のデータはGoogleスプレッドシートなのでExcel出力や集計も自在</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- インタラクティブ画面切り替えセクション（nanco SCREENS風） -->
+  <section id="screens" class="section">
+    <div class="sec-head reveal">
+      <div class="sec-tag">SCREENS & WORKFLOW</div>
+      <h2>現場で迷わない、4つのシンプル画面</h2>
+      <p>ボタンを押して、実際のアプリ画面イメージと使い方をご覧ください。</p>
+    </div>
+
+    <div class="screen-tabs reveal">
+      <button class="scr-tab active" onclick="switchShowcase(0, this)">01. QRスキャン＆連続処理</button>
+      <button class="scr-tab" onclick="switchShowcase(1, this)">02. 在庫一覧＆要発注アラート</button>
+      <button class="scr-tab" onclick="switchShowcase(2, this)">03. QRラベル自動発行</button>
+      <button class="scr-tab" onclick="switchShowcase(3, this)">04. スプレッドシート＆履歴</button>
+    </div>
+
+    <div class="screen-showcase reveal">
+      <div id="showcase-text">
+        <div style="color:#38bdf8; font-weight:900; font-size:0.84rem; margin-bottom:6px;">STEP 01 / CAMERA SCAN</div>
+        <h3 style="font-size:1.45rem; margin:0 0 12px 0;">カメラを向けるだけ。連続スキャンにも対応</h3>
+        <p style="color:var(--text-sub); margin:0 0 16px 0;">
+          専用アプリ不要でWebブラウザからカメラが即起動。通常スキャンでの数量指定はもちろん、大量の荷受けやピッキング時には「連続スキャンモード」でかざすだけで+1 / -1の連続カウントが可能です。
+        </p>
+        <ul style="padding-left:18px; color:#e2e8f0; font-size:0.9rem; margin:0;">
+          <li>誤ってスキャンしても「↩ 1つ前に戻す」ボタンで即復元</li>
+          <li>棚卸モードに切り替えれば、数えた実数で現在庫を一発上書き</li>
+        </ul>
+      </div>
+
+      <div class="showcase-ui" id="showcase-ui">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="background:#eff6ff; color:#2563eb; font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:6px;">ID: ITEM-001</span>
+          <span style="font-size:0.75rem; color:#64748b; font-weight:700;">担当: 田中</span>
+        </div>
+        <div style="font-weight:800; font-size:1.15rem; margin-bottom:10px;">ボルトM6（ステンレス）</div>
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:0.85rem; font-weight:700; color:#1d4ed8;">現在の在庫数（発注点: 10）</span>
+          <span style="font-size:1.8rem; font-weight:900; color:#2563eb;">50</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div style="background:#10b981; color:#fff; text-align:center; padding:10px; border-radius:10px; font-weight:800; font-size:0.88rem;">＋ 入庫する</div>
+          <div style="background:#ef4444; color:#fff; text-align:center; padding:10px; border-radius:10px; font-weight:800; font-size:0.88rem;">－ 出庫する</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 機能一覧（6カード） -->
   <section id="features" class="section">
     <div class="sec-head reveal">
-      <h2>現場で本当に使える機能だけを凝縮</h2>
-      <p>マニュアルなしでもパート・アルバイトスタッフ全員が初日から迷わず操作できます。</p>
+      <div class="sec-tag">FEATURES</div>
+      <h2>現場に必要な機能をすべて標準搭載</h2>
+      <p>シンプルさを保ちながら、実務で求められる管理機能を網羅しています。</p>
     </div>
 
     <div class="feat-grid">
       <div class="feat-card reveal">
         <div class="feat-icon">📷</div>
-        <h3>スマホカメラで高速QRスキャン</h3>
-        <p>アプリのインストール不要。Webブラウザを開くだけでスマホカメラが起動し、商品QRコードを瞬時に認識して入庫・出庫・棚卸を行います。</p>
+        <h3>スマホカメラで高速QR読取</h3>
+        <p>アプリのダウンロードやアップデート作業は不要。URLを開くだけでiPhone・Android・タブレットすべてで動作します。</p>
       </div>
       <div class="feat-card reveal">
         <div class="feat-icon">⚡</div>
-        <h3>連続スキャンモード（+1 / -1）</h3>
-        <p>大量の荷受けやピッキング時は連続スキャンモードへ切替。QRをかざすだけで確認画面を飛ばして1個ずつ連続カウントできます。</p>
+        <h3>連続スキャン（+1 / -1）</h3>
+        <p>連続入庫・連続出庫モードを搭載。商品のQRコードを次々とかざすだけで、確認画面をスキップして高速処理できます。</p>
       </div>
       <div class="feat-card reveal">
         <div class="feat-icon">⚠️</div>
-        <h3>発注点アラート＆発注リスト作成</h3>
-        <p>設定した発注点を下回った商品を自動で「要発注」として抽出。ワンタップで発注依頼テキストをコピーしてLINEやメールで即送信できます。</p>
+        <h3>発注点アラート＆発注コピー</h3>
+        <p>発注点を下回った在庫を自動抽出。「要発注リストをテキストコピー」を押せば、そのままLINEやメールで仕入先へ発注できます。</p>
       </div>
       <div class="feat-card reveal">
         <div class="feat-icon">🏷️</div>
-        <h3>QRラベル画像のワンタップ発行</h3>
-        <p>新しい商品を登録すると、商品IDと商品名が入った印刷用QRコードラベル画像を自動生成。そのままシール用紙に印刷して棚へ貼れます。</p>
+        <h3>商品名入りQRラベル生成</h3>
+        <p>商品を登録すると同時に、商品IDと商品名が印字されたQRラベル画像を自動生成。シール用紙に印刷してすぐに使えます。</p>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon">📊</div>
-        <h3>Googleスプレッドシート完全連携</h3>
-        <p>在庫データや入出庫履歴は自社専用のGoogleスプレッドシートにリアルタイム保存。Excel一括登録やバックアップ出力も自在です。</p>
+        <div class="feat-icon">📥</div>
+        <h3>Excel一括登録＆バックアップ</h3>
+        <p>今お使いのExcel在庫表から商品マスタを一括インポート可能。現在の全在庫データもワンクリックでExcel出力できます。</p>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon">🔐</div>
-        <h3>社員別パスコード＆操作取消</h3>
-        <p>社員ごとのパスコードでログインするため「いつ・誰が・何個動かしたか」が履歴に自動記録。誤操作しても「1つ前に戻す」ボタンで即復元できます。</p>
+        <div class="feat-icon">👥</div>
+        <h3>社員別パスコード＆操作履歴</h3>
+        <p>社員ごとのパスコードでログインするため「いつ・誰が・何個動かしたか」を自動記録。複数拠点やチーム運用でも安心です。</p>
       </div>
     </div>
   </section>
 
-  <section id="flow" class="section">
-    <div class="sec-head reveal">
-      <h2>最短即日で現場スタート</h2>
-      <p>複雑なサーバー構築やアプリ審査は一切ありません。</p>
-    </div>
-    <div class="feat-grid">
-      <div class="feat-card reveal">
-        <div style="color:#60a5fa; font-weight:900; font-size:0.85rem; margin-bottom:6px;">STEP 01</div>
-        <h3>専用環境と会社コード発行</h3>
-        <p>御社専用のスプレッドシートデータベースとログイン用「会社コード」を発行します。まずは0円のフリープランでお試し可能です。</p>
-      </div>
-      <div class="feat-card reveal">
-        <div style="color:#22d3ee; font-weight:900; font-size:0.85rem; margin-bottom:6px;">STEP 02</div>
-        <h3>商品登録＆QRシール貼り付け</h3>
-        <p>スマホまたはExcel一括登録で商品を登録し、自動発行されたQRラベルを棚や商品箱に貼り付けます。</p>
-      </div>
-      <div class="feat-card reveal">
-        <div style="color:#34d399; font-weight:900; font-size:0.85rem; margin-bottom:6px;">STEP 03</div>
-        <h3>スタッフにURLを共有して運用開始</h3>
-        <p>専用ログインURLをスタッフのスマホに送るだけ。その瞬間から全員でリアルタイムな在庫共有が始まります。</p>
-      </div>
-    </div>
-  </section>
-
+  <!-- 料金プラン＆機能比較表 -->
   <section id="pricing" class="section">
     <div class="sec-head reveal">
-      <h2>シンプルで明快な料金プラン</h2>
-      <p>まずは無料のフリープランからすべての操作感をお試しいただけます。</p>
+      <div class="sec-tag">PRICING & PLANS</div>
+      <h2>月額固定費0円から使える明快な料金プラン</h2>
+      <p>まずは無料のフリープランでお試しいただき、本格運用時にいつでも切り替えられます。</p>
     </div>
 
     <div class="price-grid">
+      <!-- フリー -->
       <div class="price-card reveal">
         <div>
-          <div style="font-weight:800; color:#34d399; font-size:0.85rem;">まずはお試し</div>
+          <div style="font-weight:800; color:#34d399; font-size:0.84rem;">まずは操作感を無料体験</div>
           <h3 style="margin:4px 0; font-size:1.3rem;">フリープラン</h3>
           <div class="price-val">0<span style="font-size:1rem; font-weight:700;"> 円 / 月</span></div>
-          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;">初期費用0円。スマホでのQRスキャンと在庫管理を無料体験できます。</p>
+          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;">初期費用0円・クレジットカード登録不要。スマホでのQR読み取りをお試しいただけます。</p>
           <ul class="price-list">
-            <li>✓ スマホQRスキャン＆在庫一覧</li>
-            <li>✓ 商品登録 10件まで</li>
-            <li class="off">連続スキャン・発注コピー</li>
+            <li>✓ スマホQRスキャン＆在庫一覧閲覧</li>
+            <li>✓ 商品登録 <strong>10件まで</strong></li>
+            <li class="off">連続スキャン・発注リストコピー</li>
             <li class="off">社員追加・Excel一括・チャット保守</li>
           </ul>
         </div>
-        <button class="btn-glass" style="width:100%;" onclick="openLoginModal()">無料で始める</button>
+        <button class="btn-glass" style="width:100%;" onclick="openLoginModal()">無料で試してみる</button>
       </div>
 
+      <!-- スタンダード -->
       <div class="price-card popular reveal">
-        <div class="pop-badge">一番人気・買い切り</div>
+        <div class="pop-badge">一番人気・買い切り導入</div>
         <div>
-          <div style="font-weight:800; color:#60a5fa; font-size:0.85rem;">月額固定費なし</div>
+          <div style="font-weight:800; color:#60a5fa; font-size:0.84rem;">毎月のランニングコスト0円</div>
           <h3 style="margin:4px 0; font-size:1.3rem;">現場導入セットアップ</h3>
           <div class="price-val">初期 30,000<span style="font-size:1rem; font-weight:700;"> 円</span></div>
-          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;"><strong>月額0円</strong>でStockFlowの全機能が制限なく使える標準導入プランです。</p>
+          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;"><strong>月額0円・ユーザー数無制限</strong>でStockFlowの全機能が使える標準プランです。</p>
           <ul class="price-list">
             <li>✓ <strong>全機能フル開放（商品数無制限）</strong></li>
             <li>✓ <strong>連続スキャン＆要発注リストコピー</strong></li>
-            <li>✓ <strong>社員アカウント管理＆Excel一括登録</strong></li>
+            <li>✓ <strong>社員アカウント無制限＆Excel一括</strong></li>
             <li>✓ 専用環境構築＆初期設定サポート</li>
           </ul>
         </div>
-        <button class="btn-glow" style="width:100%; justify-content:center; padding:14px;" onclick="openLoginModal()">このプランでログイン・見積</button>
+        <button class="btn-glow" style="width:100%; padding:14px;" onclick="openLoginModal()">このプランでログイン・見積</button>
       </div>
 
+      <!-- カスタム -->
       <div class="price-card reveal">
         <div>
-          <div style="font-weight:800; color:#22d3ee; font-size:0.85rem;">独自項目・保守付き</div>
+          <div style="font-weight:800; color:#22d3ee; font-size:0.84rem;">独自項目・保守サポート付き</div>
           <h3 style="margin:4px 0; font-size:1.3rem;">フルカスタム＆安心保守</h3>
           <div class="price-val">月 5,000<span style="font-size:1rem; font-weight:700;"> 円〜</span></div>
-          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;">初期50,000円。業務に合わせた項目追加とアプリ内チャット保守が付きます。</p>
+          <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:18px;">初期50,000円。御社の業務に合わせた項目カスタムとチャット保守が付きます。</p>
           <ul class="price-list">
             <li>✓ <strong>全機能フル利用</strong>＋専用環境構築</li>
             <li>✓ <strong>独自項目の追加・画面カスタム</strong></li>
             <li>✓ <strong>アプリ内チャット保守窓口</strong></li>
-            <li>✓ 操作サポート・不具合対応無制限</li>
+            <li>✓ 不具合対応・操作サポート無制限</li>
           </ul>
         </div>
         <button class="btn-glass" style="width:100%;" onclick="openLoginModal()">ログインして詳細を見る</button>
       </div>
     </div>
+
+    <!-- プラン別機能比較表（zaico風） -->
+    <div class="comp-wrap reveal">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>主な機能・サポート内容</th>
+            <th>フリープラン<br><span style="font-size:0.78rem; color:var(--text-sub);">初期0円 / 月0円</span></th>
+            <th style="color:#60a5fa;">現場導入セットアップ<br><span style="font-size:0.78rem; color:var(--text-sub);">初期30,000円 / 月0円</span></th>
+            <th>フルカスタム保守<br><span style="font-size:0.78rem; color:var(--text-sub);">初期50,000円 / 月5,000円</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>スマホQRスキャン（入庫・出庫・棚卸）</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+          <tr>
+            <td>商品マスタ登録上限数</td>
+            <td>10件まで</td>
+            <td class="chk-yes">無制限</td>
+            <td class="chk-yes">無制限</td>
+          </tr>
+          <tr>
+            <td>利用ユーザー数（社員パスコード発行）</td>
+            <td>初期アカウントのみ</td>
+            <td class="chk-yes">無制限（追加無料）</td>
+            <td class="chk-yes">無制限（追加無料）</td>
+          </tr>
+          <tr>
+            <td>⚡ 連続スキャンモード（+1 / -1高速処理）</td>
+            <td class="chk-no">−</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+          <tr>
+            <td>📋 要発注リストの一括テキストコピー</td>
+            <td class="chk-no">−</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+          <tr>
+            <td>📥 Excel一括インポート＆バックアップ出力</td>
+            <td class="chk-no">−</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+          <tr>
+            <td>📄 アプリ内での御見積書即時作成・PDF出力</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+          <tr>
+            <td>💬 独自項目の追加カスタム＆チャット保守窓口</td>
+            <td class="chk-no">−</td>
+            <td class="chk-no">−</td>
+            <td class="chk-yes">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
+  <!-- よくある質問（FAQ） -->
+  <section id="faq" class="section">
+    <div class="sec-head reveal">
+      <div class="sec-tag">FAQ</div>
+      <h2>よくあるご質問</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Q. 専用のバーコードリーダーやハンディ端末を買う必要はありますか？</span>
+          <span>＋</span>
+        </button>
+        <div class="faq-a">
+          いいえ、一切不要です。普段お使いのiPhoneやAndroidスマートフォン、iPadなどの標準ブラウザからアクセスするだけでカメラが起動し、QRコードを読み取れます。
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Q. なぜ「現場導入セットアップ」は月額0円で使えるのですか？</span>
+          <span>＋</span>
+        </button>
+        <div class="faq-a">
+          StockFlowは、お客様専用のGoogleスプレッドシートをデータベースとして直接連携する仕組みを採用しているため、高額な外部サーバー維持費がかかりません。そのため買い切り導入後は月額固定費0円でずっと使い続けられます。
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Q. 今使っているExcelの在庫表からデータを移行できますか？</span>
+          <span>＋</span>
+        </button>
+        <div class="faq-a">
+          はい、管理画面の「Excel一括登録」タブから、既存のExcel（.xlsx）やCSVファイルをアップロードするだけで全商品を一括登録できます。登録と同時にQRコードも自動発行されます。
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Q. スタッフが増えても追加料金はかかりませんか？</span>
+          <span>＋</span>
+        </button>
+        <div class="faq-a">
+          はい、ユーザー数による月額課金はありません。社員マスタから何名でも社員パスコードを発行でき、入出庫履歴には操作した社員名が自動で記録されます。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ページ下部ログインエリア -->
   <section id="login-area" class="section reveal">
     <div class="login-box-wrap">
       <div class="logo-badge" style="margin: 0 auto 14px; width: 48px; height: 48px;">
@@ -675,16 +1061,17 @@
       </div>
       <h2 style="margin: 0 0 6px 0; font-size: 1.45rem;">StockFlow ログイン</h2>
       <p style="margin: 0 0 20px 0; font-size: 0.85rem; color: var(--text-sub);">
-        ログインすると在庫管理システム（app.html）へ移動します
+        テスト用アカウント：会社コード <strong>demo-0001</strong> ／ パスコード <strong>1234</strong>
       </p>
       <input type="text" id="page-corp" class="login-input" placeholder="会社コード（例: demo-0001）">
       <input type="password" id="page-pass" class="login-input" placeholder="社員パスコード（例: 1234）" inputmode="numeric" onkeydown="if(event.key==='Enter') executeLogin('page')">
-      <button id="page-login-btn" class="btn-glow" style="width:100%; justify-content:center; padding:15px; font-size:1rem;" onclick="executeLogin('page')">
+      <button id="page-login-btn" class="btn-glow" style="width:100%; padding:15px; font-size:1rem;" onclick="executeLogin('page')">
         管理画面へログイン →
       </button>
     </div>
   </section>
 
+  <!-- ポップアップログインモーダル -->
   <div id="login-modal" class="modal-bg hidden" onclick="if(event.target===this) closeLoginModal()">
     <div class="login-box-wrap" style="position: relative; width: 100%;">
       <button onclick="closeLoginModal()" style="position:absolute; top:16px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">✕</button>
@@ -693,11 +1080,11 @@
       </div>
       <h2 style="margin: 0 0 6px 0; font-size: 1.4rem;">StockFlow ログイン</h2>
       <p style="margin: 0 0 18px 0; font-size: 0.84rem; color: var(--text-sub);">
-        会社コードと社員パスコードを入力してください
+        デモ体験：会社コード <strong>demo-0001</strong> ／ パスコード <strong>1234</strong>
       </p>
       <input type="text" id="modal-corp" class="login-input" placeholder="会社コード（例: demo-0001）">
       <input type="password" id="modal-pass" class="login-input" placeholder="社員パスコード（例: 1234）" inputmode="numeric" onkeydown="if(event.key==='Enter') executeLogin('modal')">
-      <button id="modal-login-btn" class="btn-glow" style="width:100%; justify-content:center; padding:15px; font-size:1rem;" onclick="executeLogin('modal')">
+      <button id="modal-login-btn" class="btn-glow" style="width:100%; padding:15px; font-size:1rem;" onclick="executeLogin('modal')">
         ログインしてアプリを開く →
       </button>
     </div>
@@ -710,15 +1097,15 @@
   <script>
     const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbytUhNCHRn4ZbC_AzAThsKGCC4vSLexOkO-EEiLr_7ats-VY1PDm7IXV2rfsmwr-h9B/exec';
 
+    // スクロールアニメーション
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+    // スマホモックアップのカウント演出
     let mockCount = 48;
     setInterval(() => {
       mockCount = (mockCount === 48) ? 49 : 48;
@@ -726,6 +1113,128 @@
       if (el) el.textContent = mockCount + ' 個';
     }, 2400);
 
+    // 画面プレビュー切り替えデータ
+    const SHOWCASE_DATA = [
+      {
+        text: `
+          <div style="color:#38bdf8; font-weight:900; font-size:0.84rem; margin-bottom:6px;">STEP 01 / CAMERA SCAN</div>
+          <h3 style="font-size:1.45rem; margin:0 0 12px 0;">カメラを向けるだけ。連続スキャンにも対応</h3>
+          <p style="color:var(--text-sub); margin:0 0 16px 0;">
+            専用アプリ不要でWebブラウザからカメラが即起動。通常スキャンでの数量指定はもちろん、大量の荷受けやピッキング時には「連続スキャンモード」でかざすだけで+1 / -1の連続カウントが可能です。
+          </p>
+          <ul style="padding-left:18px; color:#e2e8f0; font-size:0.9rem; margin:0;">
+            <li>誤ってスキャンしても「↩ 1つ前に戻す」ボタンで即復元</li>
+            <li>棚卸モードに切り替えれば、数えた実数で現在庫を一発上書き</li>
+          </ul>
+        `,
+        ui: `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="background:#eff6ff; color:#2563eb; font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:6px;">ID: ITEM-001</span>
+            <span style="font-size:0.75rem; color:#64748b; font-weight:700;">担当: 田中</span>
+          </div>
+          <div style="font-weight:800; font-size:1.15rem; margin-bottom:10px;">ボルトM6（ステンレス）</div>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span style="font-size:0.85rem; font-weight:700; color:#1d4ed8;">現在の在庫数（発注点: 10）</span>
+            <span style="font-size:1.8rem; font-weight:900; color:#2563eb;">50</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div style="background:#10b981; color:#fff; text-align:center; padding:10px; border-radius:10px; font-weight:800; font-size:0.88rem;">＋ 入庫する</div>
+            <div style="background:#ef4444; color:#fff; text-align:center; padding:10px; border-radius:10px; font-weight:800; font-size:0.88rem;">－ 出庫する</div>
+          </div>
+        `
+      },
+      {
+        text: `
+          <div style="color:#f59e0b; font-weight:900; font-size:0.84rem; margin-bottom:6px;">STEP 02 / STOCK ALERT</div>
+          <h3 style="font-size:1.45rem; margin:0 0 12px 0;">在庫不足を自動検知＆発注リスト一発コピー</h3>
+          <p style="color:var(--text-sub); margin:0 0 16px 0;">
+            商品ごとに「発注点」を設定しておくだけで、基準を下回った商品を自動で赤くハイライト表示。ワンタップで発注依頼文をコピーできるため、発注漏れを防ぎます。
+          </p>
+          <ul style="padding-left:18px; color:#e2e8f0; font-size:0.9rem; margin:0;">
+            <li>商品名・ID・保管場所のキーワード検索やQR検索に対応</li>
+            <li>「在庫不足のみ表示」フィルターで今すぐ頼むべき商品を一覧化</li>
+          </ul>
+        `,
+        ui: `
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:8px 12px; font-size:0.8rem; font-weight:800; color:#dc2626; margin-bottom:10px;">
+            ⚠️ 要発注アラート（2件の在庫が発注点以下です）
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #e2e8f0;">
+            <div>
+              <div style="font-weight:800; font-size:0.95rem;">ナットM6（100個入） <span style="background:#fef2f2; color:#ef4444; font-size:0.7rem; padding:2px 6px; border-radius:4px;">要発注</span></div>
+              <div style="font-size:0.75rem; color:#64748b;">ITEM-002 ・ 棚A-2</div>
+            </div>
+            <div style="background:#fef2f2; color:#ef4444; font-weight:900; padding:6px 12px; border-radius:8px;">3</div>
+          </div>
+          <div style="margin-top:12px; background:#2563eb; color:#fff; text-align:center; padding:10px; border-radius:10px; font-size:0.84rem; font-weight:800;">
+            📋 要発注リストをテキストコピー
+          </div>
+        `
+      },
+      {
+        text: `
+          <div style="color:#34d399; font-weight:900; font-size:0.84rem; margin-bottom:6px;">STEP 03 / QR LABEL MAKER</div>
+          <h3 style="font-size:1.45rem; margin:0 0 12px 0;">新商品の登録と同時にQRラベル画像を自動発行</h3>
+          <p style="color:var(--text-sub); margin:0 0 16px 0;">
+            バーコードがない資材や社内備品でも大丈夫。StockFlowで商品を登録すると、商品IDと商品名が入った専用QRラベル画像を即座に生成・ダウンロードできます。
+          </p>
+          <ul style="padding-left:18px; color:#e2e8f0; font-size:0.9rem; margin:0;">
+            <li>A4シール用紙やラベルプリンターで印刷して棚に貼るだけ</li>
+            <li>自動採番ボタンで商品ID（ITEM-001〜）もワンクリック入力</li>
+          </ul>
+        `,
+        ui: `
+          <div style="text-align:center; border:2px dashed #cbd5e1; border-radius:14px; padding:16px; background:#fff;">
+            <div style="width:96px; height:96px; margin:0 auto 10px; background:#0f172a; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:0.8rem;">QR CODE</div>
+            <div style="font-weight:900; font-size:1rem; color:#0f172a;">ITEM-003</div>
+            <div style="font-size:0.82rem; color:#475569; font-weight:700;">緩衝材エアキャップ 1200mm</div>
+          </div>
+          <div style="margin-top:10px; border:1.5px solid #cbd5e1; text-align:center; padding:9px; border-radius:10px; font-size:0.82rem; font-weight:800;">
+            📥 商品名・ID入りQR画像を保存
+          </div>
+        `
+      },
+      {
+        text: `
+          <div style="color:#22d3ee; font-weight:900; font-size:0.84rem; margin-bottom:6px;">STEP 04 / GOOGLE SHEETS SYNC</div>
+          <h3 style="font-size:1.45rem; margin:0 0 12px 0;">裏側はGoogleスプレッドシート。Excel出力も自在</h3>
+          <p style="color:var(--text-sub); margin:0 0 16px 0;">
+            すべての在庫データ・入出庫履歴・社員マスタは自社専用のGoogleスプレッドシートにリアルタイム保存。事務所のパソコンから直接表を閲覧・編集・Excelダウンロードできます。
+          </p>
+          <ul style="padding-left:18px; color:#e2e8f0; font-size:0.9rem; margin:0;">
+            <li>「誰が・いつ・何個動かしたか」の全体タイムラインを自動記録</li>
+            <li>社員用ログインURLを共有すれば会社コードも自動入力</li>
+          </ul>
+        `,
+        ui: `
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:12px; padding:12px; margin-bottom:10px;">
+            <div style="font-weight:800; font-size:0.9rem; color:#065f46;">📊 データベースポータル連携済</div>
+            <div style="font-size:0.76rem; color:#047857;">商品マスタ・入出庫履歴・社員マスタが自動同期中</div>
+          </div>
+          <div style="background:#16a34a; color:#fff; text-align:center; padding:10px; border-radius:10px; font-size:0.84rem; font-weight:800; margin-bottom:8px;">
+            🔗 Googleスプレッドシート本体を開く ↗
+          </div>
+          <div style="border:1.5px solid #cbd5e1; text-align:center; padding:9px; border-radius:10px; font-size:0.82rem; font-weight:800;">
+            📥 現在の全在庫データをExcel出力
+          </div>
+        `
+      }
+    ];
+
+    function switchShowcase(idx, btn) {
+      document.querySelectorAll('.scr-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('showcase-text').innerHTML = SHOWCASE_DATA[idx].text;
+      document.getElementById('showcase-ui').innerHTML = SHOWCASE_DATA[idx].ui;
+    }
+
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.toggle('open');
+      btn.querySelector('span:last-child').textContent = isOpen ? '－' : '＋';
+    }
+
+    // URLパラメータや前回の会社コードをセット
     window.onload = function() {
       const params = new URLSearchParams(window.location.search);
       const urlCorp = params.get('corp');
@@ -745,6 +1254,7 @@
       document.getElementById('login-modal').classList.add('hidden');
     }
 
+    // ログイン認証して app.html へ移動
     async function executeLogin(prefix) {
       const corp = document.getElementById(prefix + '-corp').value.trim();
       const pass = document.getElementById(prefix + '-pass').value.trim();
