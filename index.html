@@ -49,6 +49,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
     .logo {
       display: flex;
@@ -75,13 +76,14 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 14px;
     }
     .nav-links a.link {
       text-decoration: none;
       color: var(--text-muted);
       font-size: 0.92rem;
       font-weight: 700;
+      margin-right: 8px;
       transition: color 0.15s;
     }
     .nav-links a.link:hover { color: var(--accent); }
@@ -90,10 +92,10 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 11px 22px;
+      padding: 10px 18px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       text-decoration: none;
       cursor: pointer;
       border: none;
@@ -461,7 +463,8 @@
         <a href="#features" class="link">機能</a>
         <a href="#auth" class="link">かんたんログイン</a>
         <a href="#pricing" class="link">料金プラン</a>
-        <a href="app.html" class="btn btn-primary">無料で始める / ログイン</a>
+        <a href="app.html" class="btn btn-outline">ログイン</a>
+        <a href="app.html?mode=signup" class="btn btn-primary">無料で始める</a>
       </nav>
     </div>
   </header>
@@ -475,7 +478,7 @@
           紙の台帳やExcelの二重入力はもう不要。今お使いのスマートフォンでQR・バーコードを読み取るだけで、入出庫・棚卸・発注アラートをリアルタイムに共有できます。
         </p>
         <div class="hero-actions">
-          <a href="app.html" class="btn btn-primary">Google / メールですぐ始める（無料）</a>
+          <a href="app.html?mode=signup" class="btn btn-primary">無料で新規登録する（Google / メール）</a>
           <a href="app.html?demo=1" class="btn btn-outline">デモ環境を体験する</a>
         </div>
         <div class="trust-badges">
@@ -594,7 +597,7 @@
             <li>入出庫・棚卸リアルタイム記録</li>
             <li>Excelデータ出力</li>
           </ul>
-          <a href="app.html" class="btn btn-outline">無料でアカウント作成</a>
+          <a href="app.html?mode=signup" class="btn btn-outline">無料でアカウント作成</a>
         </div>
 
         <!-- Standard Plan -->
@@ -611,7 +614,7 @@
             <li>Excel商品マスタ一括インポート</li>
             <li>発注点割れ商品のワンタップ発注コピー</li>
           </ul>
-          <a href="app.html" class="btn btn-primary">今すぐ始める</a>
+          <a href="app.html?mode=signup" class="btn btn-primary">今すぐ新規登録して始める</a>
         </div>
 
         <!-- Business Pro Plan -->
@@ -627,7 +630,7 @@
             <li>QRラベル一括PDF印刷</li>
             <li>管理者・一般社員の操作権限分離＆自動メール通知</li>
           </ul>
-          <a href="app.html" class="btn btn-outline">ビジネスプロで始める</a>
+          <a href="app.html?mode=signup" class="btn btn-outline">ビジネスプロで始める</a>
         </div>
       </div>
     </div>
@@ -642,7 +645,8 @@
       <div class="footer-links">
         <a href="#features">機能一覧</a>
         <a href="#pricing">料金プラン</a>
-        <a href="app.html">アプリにログイン</a>
+        <a href="app.html">ログイン</a>
+        <a href="app.html?mode=signup">新規登録（無料）</a>
       </div>
     </div>
   </footer>
