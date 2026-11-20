@@ -91,7 +91,7 @@
     }
     .form-group { margin-bottom: 14px; }
 
-    /* Login Screen */
+    /* Login & Signup Screen */
     #loginScreen {
       min-height: 100vh;
       display: flex;
@@ -103,9 +103,9 @@
     .login-box {
       background: #fff;
       width: 100%;
-      max-width: 440px;
+      max-width: 450px;
       border-radius: 24px;
-      padding: 32px 26px;
+      padding: 30px 26px;
       box-shadow: 0 24px 60px rgba(0,0,0,0.3);
     }
     .login-brand {
@@ -113,7 +113,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
       font-weight: 800;
       font-size: 1.45rem;
@@ -130,18 +130,66 @@
     }
     .login-sub {
       text-align: center;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       color: var(--muted);
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
+
+    /* Main Mode Switcher (Login vs Signup) */
+    .mode-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .mode-btn {
+      padding: 12px 8px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+    }
+    .mode-btn.active {
+      color: var(--accent);
+    }
+    .mode-btn.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 3px 3px 0 0;
+    }
+    .mode-btn .badge-free {
+      display: inline-block;
+      font-size: 0.68rem;
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* Sub Auth Tabs */
     .auth-tabs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       background: var(--bg);
       padding: 4px;
       border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       gap: 4px;
+    }
+    .auth-tabs.cols-2 {
+      grid-template-columns: repeat(2, 1fr);
     }
     .auth-tab {
       padding: 8px 4px;
@@ -161,8 +209,18 @@
     .google-btn-wrap {
       display: flex;
       justify-content: center;
-      margin: 16px 0;
+      margin: 14px 0;
       min-height: 44px;
+    }
+    .signup-step-card {
+      background: var(--accent-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .signup-step-card label {
+      color: var(--primary);
     }
     .api-url-notice {
       background: var(--amber-soft);
@@ -414,80 +472,142 @@
 
   <div id="toast" class="hidden"></div>
 
-  <!-- ================= LOGIN SCREEN ================= -->
+  <!-- ================= LOGIN / SIGNUP SCREEN ================= -->
   <div id="loginScreen">
     <div class="login-box">
       <div class="login-brand">
         <div class="login-brand-icon">SF</div>
         <span>StockFlow</span>
       </div>
-      <p class="login-sub">クラウド在庫管理システム ログイン</p>
+      <p class="login-sub">クラウド在庫管理システム</p>
 
       <div id="apiConfigAlert" class="api-url-notice hidden">
         <strong>初期設定案内：</strong>GASのWebアプリURLが未設定の場合は、下の「接続先API URL設定」からデプロイURLを保存してください。
       </div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" onclick="switchAuthTab('google', this)">Googleログイン</button>
-        <button class="auth-tab" onclick="switchAuthTab('email', this)">メール認証</button>
-        <button class="auth-tab" onclick="switchAuthTab('kiosk', this)">現場・共有端末</button>
+      <!-- Top Mode Switcher: Login vs Signup -->
+      <div class="mode-switcher">
+        <button type="button" class="mode-btn active" id="modeLoginBtn" onclick="switchEntryMode('login')">ログイン</button>
+        <button type="button" class="mode-btn" id="modeSignupBtn" onclick="switchEntryMode('signup')">
+          新規登録<span class="badge-free">無料</span>
+        </button>
       </div>
 
-      <!-- 1. Google Login Tab -->
-      <div id="authTabGoogle">
-        <p style="font-size:0.84rem; color:var(--muted); text-align:center; margin-bottom:10px;">
-          会社コード不要。Googleアカウントでワンタップログイン（初回は自動で専用環境を構築します）
-        </p>
-        <div class="google-btn-wrap">
-          <div id="g_id_signin"></div>
+      <!-- ==================== MODE A: LOGIN ==================== -->
+      <div id="entryLoginSection">
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" onclick="switchLoginMethod('google', this)">Googleログイン</button>
+          <button type="button" class="auth-tab" onclick="switchLoginMethod('email', this)">メール認証</button>
+          <button type="button" class="auth-tab" onclick="switchLoginMethod('kiosk', this)">現場・共有端末</button>
         </div>
-      </div>
 
-      <!-- 2. Email OTP Tab -->
-      <div id="authTabEmail" class="hidden">
-        <div id="emailStep1">
-          <div class="form-group">
-            <label>メールアドレス</label>
-            <input type="email" id="otpEmailInput" placeholder="name@example.com">
-          </div>
-          <button class="btn btn-primary btn-block" id="sendOtpBtn" onclick="requestEmailOtp()">6桁の認証コードを送信</button>
-        </div>
-        <div id="emailStep2" class="hidden">
-          <p style="font-size:0.82rem; color:var(--emerald); font-weight:700; margin-bottom:10px;">
-            メールに6桁の認証コードを送信しました（有効期限10分）
+        <!-- 1. Google Login -->
+        <div id="loginMethodGoogle">
+          <p style="font-size:0.83rem; color:var(--muted); text-align:center; margin-bottom:8px;">
+            登録済みのGoogleアカウントでワンタップログイン
           </p>
-          <div class="form-group">
-            <label>認証コード（6桁の数字）</label>
-            <input type="text" id="otpCodeInput" inputmode="numeric" maxlength="6" placeholder="123456">
+          <div class="google-btn-wrap">
+            <div id="g_id_signin_login"></div>
           </div>
-          <button class="btn btn-primary btn-block" id="verifyOtpBtn" onclick="submitEmailOtp()">認証してログイン</button>
-          <button class="btn btn-outline btn-sm btn-block" style="margin-top:8px;" onclick="resetEmailOtpStep()">メールアドレスを変更する</button>
+          <p style="font-size:0.76rem; color:var(--muted); text-align:center;">
+            はじめて会社・店舗の環境を作る方は上の「新規登録」タブをお選びください。
+          </p>
+        </div>
+
+        <!-- 2. Email OTP Login -->
+        <div id="loginMethodEmail" class="hidden">
+          <div id="loginEmailStep1">
+            <div class="form-group">
+              <label>登録済みメールアドレス</label>
+              <input type="email" id="loginOtpEmailInput" placeholder="name@example.com">
+            </div>
+            <button type="button" class="btn btn-primary btn-block" id="loginSendOtpBtn" onclick="requestEmailOtp('login')">6桁の認証コードを送信</button>
+          </div>
+          <div id="loginEmailStep2" class="hidden">
+            <p style="font-size:0.82rem; color:var(--emerald); font-weight:700; margin-bottom:10px;">
+              メールに6桁の認証コードを送信しました（有効期限10分）
+            </p>
+            <div class="form-group">
+              <label>認証コード（6桁の数字）</label>
+              <input type="text" id="loginOtpCodeInput" inputmode="numeric" maxlength="6" placeholder="123456">
+            </div>
+            <button type="button" class="btn btn-primary btn-block" id="loginVerifyOtpBtn" onclick="submitEmailOtp('login')">認証してログイン</button>
+            <button type="button" class="btn btn-outline btn-sm btn-block" style="margin-top:8px;" onclick="resetEmailOtpStep('login')">メールアドレスを変更する</button>
+          </div>
+        </div>
+
+        <!-- 3. Kiosk / Shared Device Login -->
+        <div id="loginMethodKiosk" class="hidden">
+          <div class="form-group">
+            <label>会社コード</label>
+            <input type="text" id="corpCodeInput" placeholder="例: sf-xxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label>社員パスコード</label>
+            <input type="password" id="staffPassInput" placeholder="社員パスコードを入力">
+          </div>
+          <button type="button" class="btn btn-primary btn-block" id="kioskLoginBtn" onclick="loginWithKiosk()">現場アカウントでログイン</button>
         </div>
       </div>
 
-      <!-- 3. Kiosk / Shared Device Tab -->
-      <div id="authTabKiosk" class="hidden">
-        <div class="form-group">
-          <label>会社コード</label>
-          <input type="text" id="corpCodeInput" placeholder="例: sf-xxxxxxxx">
+      <!-- ==================== MODE B: SIGNUP ==================== -->
+      <div id="entrySignupSection" class="hidden">
+        <div class="signup-step-card">
+          <div class="form-group" style="margin-bottom:4px;">
+            <label>STEP 1. 会社名・店舗名・チーム名（必須）</label>
+            <input type="text" id="signupOrgNameInput" placeholder="例: 株式会社ストックフロー 本社倉庫">
+          </div>
+          <small style="font-size:0.74rem; color:var(--muted);">
+            入力後、下のGoogleまたはメールアドレスで認証すると自社専用の在庫管理環境が自動作成されます（初期費用0円・20商品まで無料）。
+          </small>
         </div>
-        <div class="form-group">
-          <label>社員パスコード</label>
-          <input type="password" id="staffPassInput" placeholder="社員パスコードを入力">
+
+        <label style="margin-bottom:6px;">STEP 2. 管理者アカウントの作成方法を選択</label>
+        <div class="auth-tabs cols-2">
+          <button type="button" class="auth-tab active" onclick="switchSignupMethod('google', this)">Googleで新規登録</button>
+          <button type="button" class="auth-tab" onclick="switchSignupMethod('email', this)">メールで新規登録</button>
         </div>
-        <button class="btn btn-primary btn-block" id="kioskLoginBtn" onclick="loginWithKiosk()">現場アカウントでログイン</button>
+
+        <!-- Signup via Google -->
+        <div id="signupMethodGoogle">
+          <div class="google-btn-wrap">
+            <div id="g_id_signin_signup"></div>
+          </div>
+        </div>
+
+        <!-- Signup via Email OTP -->
+        <div id="signupMethodEmail" class="hidden">
+          <div id="signupEmailStep1">
+            <div class="form-group">
+              <label>管理者メールアドレス</label>
+              <input type="email" id="signupOtpEmailInput" placeholder="admin@example.com">
+            </div>
+            <button type="button" class="btn btn-emerald btn-block" id="signupSendOtpBtn" onclick="requestEmailOtp('signup')">認証コードを送信して登録へ進む</button>
+          </div>
+          <div id="signupEmailStep2" class="hidden">
+            <p style="font-size:0.82rem; color:var(--emerald); font-weight:700; margin-bottom:10px;">
+              認証コードを送信しました。届いた6桁の数字を入力してください。
+            </p>
+            <div class="form-group">
+              <label>認証コード（6桁の数字）</label>
+              <input type="text" id="signupOtpCodeInput" inputmode="numeric" maxlength="6" placeholder="123456">
+            </div>
+            <button type="button" class="btn btn-emerald btn-block" id="signupVerifyOtpBtn" onclick="submitEmailOtp('signup')">専用環境を作成して開始</button>
+            <button type="button" class="btn btn-outline btn-sm btn-block" style="margin-top:8px;" onclick="resetEmailOtpStep('signup')">メールアドレスを変更する</button>
+          </div>
+        </div>
       </div>
 
-      <!-- Onboarding Modal-like inline box for first-time Google/Email users -->
-      <div id="onboardingBox" class="hidden" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
-        <p style="font-size:0.86rem; font-weight:700; color:var(--accent); margin-bottom:8px;">
-          初回ログインありがとうございます！会社名・店舗名を入力して専用環境を作成します。
+      <!-- Fallback Onboarding Box (if an unregistered user clicked Login tab by mistake) -->
+      <div id="fallbackOnboardingBox" class="hidden" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+        <p style="font-size:0.85rem; font-weight:700; color:var(--accent); margin-bottom:8px;">
+          このアカウントはまだ登録されていません。会社名・店舗名を入力すると新規環境を作成してそのまま開始できます。
         </p>
         <div class="form-group">
           <label>会社名・店舗名・チーム名</label>
-          <input type="text" id="newOrgNameInput" placeholder="例: 株式会社ストックフロー 本社倉庫">
+          <input type="text" id="fallbackOrgNameInput" placeholder="例: 株式会社ストックフロー 本社倉庫">
         </div>
-        <button class="btn btn-emerald btn-block" onclick="completeOnboarding()">専用在庫環境を作成して開始</button>
+        <button type="button" class="btn btn-emerald btn-block" onclick="completeFallbackOnboarding()">新規環境を作成して開始</button>
       </div>
 
       <div style="margin-top:18px; text-align:center;">
@@ -497,7 +617,7 @@
         <div id="apiConfigPanel" class="hidden" style="margin-top:10px; text-align:left;">
           <label>GAS Webアプリ URL（/exec）</label>
           <input type="url" id="gasUrlInput" placeholder="https://script.google.com/macros/s/xxxx/exec">
-          <button class="btn btn-outline btn-sm btn-block" style="margin-top:6px;" onclick="saveGasUrl()">URLを保存</button>
+          <button type="button" class="btn btn-outline btn-sm btn-block" style="margin-top:6px;" onclick="saveGasUrl()">URLを保存</button>
         </div>
       </div>
     </div>
@@ -790,6 +910,7 @@
       staff: JSON.parse(sessionStorage.getItem('sf_staff') || 'null'),
       settings: JSON.parse(sessionStorage.getItem('sf_settings') || 'null'),
       items: [],
+      entryMode: 'login', // 'login' | 'signup'
       pendingAuth: null,
       scanner: null,
       scanning: false
@@ -826,19 +947,25 @@
         document.getElementById('gasUrlInput').value = state.gasUrl;
       }
 
-      // Check URL params (?corp=xxxx or ?demo=1)
+      // Check URL params (?corp=xxxx, ?demo=1, ?mode=signup)
       const params = new URLSearchParams(window.location.search);
       const qrCorp = params.get('corp');
       const isDemo = params.get('demo');
+      const modeParam = params.get('mode');
+
       if (qrCorp) {
+        switchEntryMode('login');
         document.getElementById('corpCodeInput').value = qrCorp;
-        const kioskTabBtn = document.querySelectorAll('.auth-tab')[2];
-        switchAuthTab('kiosk', kioskTabBtn);
+        const kioskTabBtn = document.querySelectorAll('#entryLoginSection .auth-tab')[2];
+        switchLoginMethod('kiosk', kioskTabBtn);
       } else if (isDemo === '1') {
+        switchEntryMode('login');
         document.getElementById('corpCodeInput').value = 'demo-0001';
         document.getElementById('staffPassInput').value = '1234';
-        const kioskTabBtn = document.querySelectorAll('.auth-tab')[2];
-        switchAuthTab('kiosk', kioskTabBtn);
+        const kioskTabBtn = document.querySelectorAll('#entryLoginSection .auth-tab')[2];
+        switchLoginMethod('kiosk', kioskTabBtn);
+      } else if (modeParam === 'signup') {
+        switchEntryMode('signup');
       }
 
       if (state.token && state.staff && state.settings) {
@@ -849,8 +976,9 @@
     });
 
     function initGoogleSignIn() {
-      const btnContainer = document.getElementById('g_id_signin');
-      if (!btnContainer) return;
+      const loginBtnBox = document.getElementById('g_id_signin_login');
+      const signupBtnBox = document.getElementById('g_id_signin_signup');
+      if (!loginBtnBox || !signupBtnBox) return;
 
       const timer = setInterval(() => {
         if (window.google && google.accounts && google.accounts.id) {
@@ -863,10 +991,16 @@
             });
             gsiInitialized = true;
           }
-          btnContainer.innerHTML = '';
+          loginBtnBox.innerHTML = '';
           google.accounts.id.renderButton(
-            btnContainer,
-            { theme: 'outline', size: 'large', width: 320, text: 'continue_with' }
+            loginBtnBox,
+            { theme: 'outline', size: 'large', width: 320, text: 'signin_with' }
+          );
+
+          signupBtnBox.innerHTML = '';
+          google.accounts.id.renderButton(
+            signupBtnBox,
+            { theme: 'filled_blue', size: 'large', width: 320, text: 'signup_with' }
           );
         }
       }, 200);
@@ -908,25 +1042,57 @@
     }
 
     // =========================================================================
-    // AUTHENTICATION HANDLERS (GOOGLE / EMAIL OTP / KIOSK)
+    // MODE & TAB SWITCHING (LOGIN vs SIGNUP)
     // =========================================================================
-    function switchAuthTab(tab, btn) {
-      document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('authTabGoogle').classList.toggle('hidden', tab !== 'google');
-      document.getElementById('authTabEmail').classList.toggle('hidden', tab !== 'email');
-      document.getElementById('authTabKiosk').classList.toggle('hidden', tab !== 'kiosk');
-      document.getElementById('onboardingBox').classList.add('hidden');
+    function switchEntryMode(mode) {
+      state.entryMode = mode;
+      document.getElementById('modeLoginBtn').classList.toggle('active', mode === 'login');
+      document.getElementById('modeSignupBtn').classList.toggle('active', mode === 'signup');
+      document.getElementById('entryLoginSection').classList.toggle('hidden', mode !== 'login');
+      document.getElementById('entrySignupSection').classList.toggle('hidden', mode !== 'signup');
+      document.getElementById('fallbackOnboardingBox').classList.add('hidden');
     }
 
+    function switchLoginMethod(tab, btn) {
+      document.querySelectorAll('#entryLoginSection .auth-tab').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.getElementById('loginMethodGoogle').classList.toggle('hidden', tab !== 'google');
+      document.getElementById('loginMethodEmail').classList.toggle('hidden', tab !== 'email');
+      document.getElementById('loginMethodKiosk').classList.toggle('hidden', tab !== 'kiosk');
+      document.getElementById('fallbackOnboardingBox').classList.add('hidden');
+    }
+
+    function switchSignupMethod(tab, btn) {
+      document.querySelectorAll('#entrySignupSection .auth-tab').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.getElementById('signupMethodGoogle').classList.toggle('hidden', tab !== 'google');
+      document.getElementById('signupMethodEmail').classList.toggle('hidden', tab !== 'email');
+    }
+
+    // =========================================================================
+    // AUTHENTICATION HANDLERS (GOOGLE / EMAIL OTP / KIOSK)
+    // =========================================================================
     async function handleGoogleCredentialResponse(response) {
       try {
-        showToast('Googleアカウントを認証中...');
-        const data = await callApi('loginWithGoogle', [response.credential, '']);
+        const isSignup = state.entryMode === 'signup';
+        let orgName = '';
+
+        if (isSignup) {
+          orgName = document.getElementById('signupOrgNameInput').value.trim();
+          if (!orgName) {
+            document.getElementById('signupOrgNameInput').focus();
+            return showToast('先に「STEP 1. 会社名・店舗名」を入力してください', 'error');
+          }
+          showToast('新規環境を作成しています...');
+        } else {
+          showToast('Googleアカウントを認証中...');
+        }
+
+        const data = await callApi('loginWithGoogle', [response.credential, orgName]);
         if (data.needsOnboarding) {
           state.pendingAuth = { type: 'google', idToken: response.credential };
-          document.getElementById('onboardingBox').classList.remove('hidden');
-          showToast('初回登録：会社名を入力してください');
+          document.getElementById('fallbackOnboardingBox').classList.remove('hidden');
+          showToast('未登録のアカウントです。会社名を入力して新規登録してください');
           return;
         }
         if (data.success) finalizeLogin(data);
@@ -935,15 +1101,29 @@
       }
     }
 
-    async function requestEmailOtp() {
-      const email = document.getElementById('otpEmailInput').value.trim();
+    async function requestEmailOtp(mode) {
+      if (mode === 'signup') {
+        const orgName = document.getElementById('signupOrgNameInput').value.trim();
+        if (!orgName) {
+          document.getElementById('signupOrgNameInput').focus();
+          return showToast('先に「STEP 1. 会社名・店舗名」を入力してください', 'error');
+        }
+      }
+
+      const emailInputId = mode === 'signup' ? 'signupOtpEmailInput' : 'loginOtpEmailInput';
+      const btnId = mode === 'signup' ? 'signupSendOtpBtn' : 'loginSendOtpBtn';
+      const step1Id = mode === 'signup' ? 'signupEmailStep1' : 'loginEmailStep1';
+      const step2Id = mode === 'signup' ? 'signupEmailStep2' : 'loginEmailStep2';
+
+      const email = document.getElementById(emailInputId).value.trim();
       if (!email) return showToast('メールアドレスを入力してください', 'error');
-      const btn = document.getElementById('sendOtpBtn');
+
+      const btn = document.getElementById(btnId);
       btn.disabled = true;
       try {
         await callApi('sendEmailOtp', [email]);
-        document.getElementById('emailStep1').classList.add('hidden');
-        document.getElementById('emailStep2').classList.remove('hidden');
+        document.getElementById(step1Id).classList.add('hidden');
+        document.getElementById(step2Id).classList.remove('hidden');
         showToast('認証コードを送信しました', 'success');
       } catch (e) {
         showToast(e.message, 'error');
@@ -952,23 +1132,39 @@
       }
     }
 
-    function resetEmailOtpStep() {
-      document.getElementById('emailStep2').classList.add('hidden');
-      document.getElementById('emailStep1').classList.remove('hidden');
+    function resetEmailOtpStep(mode) {
+      const step1Id = mode === 'signup' ? 'signupEmailStep1' : 'loginEmailStep1';
+      const step2Id = mode === 'signup' ? 'signupEmailStep2' : 'loginEmailStep2';
+      document.getElementById(step2Id).classList.add('hidden');
+      document.getElementById(step1Id).classList.remove('hidden');
     }
 
-    async function submitEmailOtp() {
-      const email = document.getElementById('otpEmailInput').value.trim();
-      const code = document.getElementById('otpCodeInput').value.trim();
+    async function submitEmailOtp(mode) {
+      const emailInputId = mode === 'signup' ? 'signupOtpEmailInput' : 'loginOtpEmailInput';
+      const codeInputId = mode === 'signup' ? 'signupOtpCodeInput' : 'loginOtpCodeInput';
+      const btnId = mode === 'signup' ? 'signupVerifyOtpBtn' : 'loginVerifyOtpBtn';
+
+      const email = document.getElementById(emailInputId).value.trim();
+      const code = document.getElementById(codeInputId).value.trim();
+      let orgName = '';
+
+      if (mode === 'signup') {
+        orgName = document.getElementById('signupOrgNameInput').value.trim();
+        if (!orgName) {
+          document.getElementById('signupOrgNameInput').focus();
+          return showToast('会社名・店舗名を入力してください', 'error');
+        }
+      }
       if (!code) return showToast('6桁の認証コードを入力してください', 'error');
-      const btn = document.getElementById('verifyOtpBtn');
+
+      const btn = document.getElementById(btnId);
       btn.disabled = true;
       try {
-        const data = await callApi('verifyEmailOtp', [email, code, '']);
+        const data = await callApi('verifyEmailOtp', [email, code, orgName]);
         if (data.needsOnboarding) {
           state.pendingAuth = { type: 'otp', email, code };
-          document.getElementById('onboardingBox').classList.remove('hidden');
-          showToast('初回登録：会社名を入力してください');
+          document.getElementById('fallbackOnboardingBox').classList.remove('hidden');
+          showToast('未登録のメールアドレスです。会社名を入力して新規登録してください');
           return;
         }
         if (data.success) finalizeLogin(data);
@@ -979,8 +1175,8 @@
       }
     }
 
-    async function completeOnboarding() {
-      const orgName = document.getElementById('newOrgNameInput').value.trim();
+    async function completeFallbackOnboarding() {
+      const orgName = document.getElementById('fallbackOrgNameInput').value.trim();
       if (!orgName) return showToast('会社名・店舗名を入力してください', 'error');
       if (!state.pendingAuth) return;
       try {
