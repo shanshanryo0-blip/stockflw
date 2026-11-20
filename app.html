@@ -795,6 +795,8 @@
       scanning: false
     };
 
+    let gsiInitialized = false;
+
     // XSS Prevention Helper (HTML Escape)
     function escapeHtml(str) {
       return String(str === null || str === undefined ? '' : str)
@@ -847,15 +849,23 @@
     });
 
     function initGoogleSignIn() {
+      const btnContainer = document.getElementById('g_id_signin');
+      if (!btnContainer) return;
+
       const timer = setInterval(() => {
         if (window.google && google.accounts && google.accounts.id) {
           clearInterval(timer);
-          google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleCredentialResponse
-          });
+          if (!gsiInitialized) {
+            google.accounts.id.initialize({
+              client_id: GOOGLE_CLIENT_ID,
+              callback: handleGoogleCredentialResponse,
+              ux_mode: 'popup'
+            });
+            gsiInitialized = true;
+          }
+          btnContainer.innerHTML = '';
           google.accounts.id.renderButton(
-            document.getElementById('g_id_signin'),
+            btnContainer,
             { theme: 'outline', size: 'large', width: 320, text: 'continue_with' }
           );
         }
