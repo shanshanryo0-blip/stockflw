@@ -781,7 +781,7 @@
     // CONFIG & STATE
     // =========================================================================
     const GOOGLE_CLIENT_ID = "390332343665-bnn8c9m05v2eukcvmv7fbie5dqlkt70h.apps.googleusercontent.com";
-    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbytUhNCHRn4ZbC_AzAThsKGCC4vSLexOkO-EEiLr_7ats-VY1PDm7IXV2rfsmwr-h9B/exec"; // ここにGASの /exec URLを直接書いておくと初期入力も不要になります
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbytUhNCHRn4ZbC_AzAThsKGCC4vSLexOkO-EEiLr_7ats-VY1PDm7IXV2rfsmwr-h9B/exec";
 
     let state = {
       gasUrl: localStorage.getItem('sf_gas_url') || DEFAULT_GAS_URL,
@@ -790,7 +790,7 @@
       staff: JSON.parse(sessionStorage.getItem('sf_staff') || 'null'),
       settings: JSON.parse(sessionStorage.getItem('sf_settings') || 'null'),
       items: [],
-      pendingAuth: null, // { type: 'google'|'otp', idToken?, email?, code? }
+      pendingAuth: null,
       scanner: null,
       scanning: false
     };
@@ -824,11 +824,17 @@
         document.getElementById('gasUrlInput').value = state.gasUrl;
       }
 
-      // Check URL params (?corp=xxxx for QR kiosk login)
+      // Check URL params (?corp=xxxx or ?demo=1)
       const params = new URLSearchParams(window.location.search);
       const qrCorp = params.get('corp');
+      const isDemo = params.get('demo');
       if (qrCorp) {
         document.getElementById('corpCodeInput').value = qrCorp;
+        const kioskTabBtn = document.querySelectorAll('.auth-tab')[2];
+        switchAuthTab('kiosk', kioskTabBtn);
+      } else if (isDemo === '1') {
+        document.getElementById('corpCodeInput').value = 'demo-0001';
+        document.getElementById('staffPassInput').value = '1234';
         const kioskTabBtn = document.querySelectorAll('.auth-tab')[2];
         switchAuthTab('kiosk', kioskTabBtn);
       }
